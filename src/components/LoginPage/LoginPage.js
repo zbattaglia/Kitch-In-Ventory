@@ -44,7 +44,7 @@ class LoginPage extends Component {
           </h2>
         )}
         <div className="col-4" id="login">
-          <div class="card">
+          <div className="card">
             <form onSubmit={this.login}>
               <h1 id="LogIn-Header">Login</h1>
               <div className="row">
@@ -75,7 +75,7 @@ class LoginPage extends Component {
                     ></input><span className="icon"><i className="fa fa-wrapper fa-lock"></i></span>
                 </div>
               </div>
-                <div class="btn-container">
+                <div className="btn-container">
                   <input
                     type="submit"
                     className="btn-light btn-animated"
