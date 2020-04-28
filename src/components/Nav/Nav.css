@@ -9,6 +9,7 @@
 
 .nav {
   overflow: hidden;
+  border: solid;
   /* background-color: #00acb0; */
 }
 
