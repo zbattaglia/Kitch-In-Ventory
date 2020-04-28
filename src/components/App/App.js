@@ -16,6 +16,9 @@ import ProtectedRoute from '../ProtectedRoute/ProtectedRoute'
 import AboutPage from '../AboutPage/AboutPage';
 import UserPage from '../UserPage/UserPage';
 import InfoPage from '../InfoPage/InfoPage';
+import KitchenPage from '../KitchenPage/KitchenPage';
+import ShoppingListPage from '../ShoppingListPage/ShoppingListPage';
+import EditItemPage from '../EditItemPage/EditItemPage';
 
 import './App.css';
 
@@ -54,6 +57,23 @@ class App extends Component {
               exact
               path="/info"
               component={InfoPage}
+            />
+            {/* Link to the user's kitchen page */}
+            <ProtectedRoute
+              exact
+              path="/kitchen"
+              component={KitchenPage}
+            />
+            {/* Link to the user's shopping liset */}
+            <ProtectedRoute
+              exact
+              path="/list"
+              component={ShoppingListPage}
+            />
+            <ProtectedRoute
+              exact
+              path="/editItem"
+              component={EditItemPage}
             />
             {/* If none of the other routes matched, we will show a 404. */}
             <Route render={() => <h1>404</h1>} />

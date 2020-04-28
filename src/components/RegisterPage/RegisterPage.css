@@ -1,0 +1,23 @@
+form {
+    background-color: white;
+}
+
+#register {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#Register-Header {
+    text-align: center;
+    font-size: 2rem;
+    margin: 5px;
+}
+
+.Input-Field {
+    height: 2rem;
+}
+
+#Login-Link {
+    text-decoration: underline;
+    cursor: pointer;
+}

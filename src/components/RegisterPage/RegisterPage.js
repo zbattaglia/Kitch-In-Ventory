@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
+import './RegisterPage.css';
 
 class RegisterPage extends Component {
   state = {
@@ -31,7 +32,7 @@ class RegisterPage extends Component {
 
   render() {
     return (
-      <div>
+      <div className="row">
         {this.props.errors.registrationMessage && (
           <h2
             className="alert"
@@ -40,48 +41,56 @@ class RegisterPage extends Component {
             {this.props.errors.registrationMessage}
           </h2>
         )}
-        <form onSubmit={this.registerUser}>
-          <h1>Register User</h1>
-          <div>
-            <label htmlFor="username">
-              Username:
-              <input
-                type="text"
-                name="username"
-                value={this.state.username}
-                onChange={this.handleInputChangeFor('username')}
-              />
-            </label>
+        <div className="col-4" id="register">
+          <div className="card">
+            <form onSubmit={this.registerUser}>
+              <h1 id="Register-Header">Register User</h1>
+              <div className="row">
+                <div className="col-3 level-item">
+                  <label htmlFor="username">Username:</label>
+                </div>
+                <div className="col-9 input-control ">
+                  <input
+                  className = "input-contains-icon Input-Field"
+                    type="text"
+                    name="username"
+                    value={this.state.username}
+                    onChange={this.handleInputChangeFor('username')}
+                  /><span className="icon"><i className="fa fa-wrapper fa-user"></i></span>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-3 level-item">
+                  <label htmlFor="password">Password:</label>
+                </div>
+                <div className="col-9 input-control ">
+                  <input
+                  className="input-contains-icon Input-Field"
+                    type="password"
+                    name="password"
+                    value={this.state.password}
+                    onChange={this.handleInputChangeFor('password')}
+                  /><span className="icon"><i className="fa fa-wrapper fa-lock"></i></span>
+                </div>
+              </div>
+              <div class="btn-container">
+                  <input
+                    type="submit"
+                    className="btn-light btn-animated"
+                    name="register"
+                    value="Register"
+                  />
+                </div>
+            </form>
           </div>
-          <div>
-            <label htmlFor="password">
-              Password:
-              <input
-                type="password"
-                name="password"
-                value={this.state.password}
-                onChange={this.handleInputChangeFor('password')}
-              />
-            </label>
-          </div>
-          <div>
-            <input
-              className="register"
-              type="submit"
-              name="submit"
-              value="Register"
-            />
-          </div>
-        </form>
-        <center>
-          <button
-            type="button"
-            className="link-button"
-            onClick={() => {this.props.dispatch({type: 'SET_TO_LOGIN_MODE'})}}
-          >
-            Login
-          </button>
-        </center>
+          <center>
+            <div
+              onClick={() => {this.props.dispatch({type: 'SET_TO_LOGIN_MODE'})}}
+            >
+              <p id="Login-Link">Back to Login</p>
+            </div>
+          </center>
+        </div>
       </div>
     );
   }
