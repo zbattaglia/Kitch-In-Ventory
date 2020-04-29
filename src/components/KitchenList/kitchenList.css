@@ -1,3 +1,7 @@
-.listRow {
-    display: inline-block;
+.kitchen-li {
+    display: inline-flex;
+}
+
+#kitchen-btn {
+    float: right;
 }

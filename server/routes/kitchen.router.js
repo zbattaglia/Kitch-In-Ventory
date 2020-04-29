@@ -10,7 +10,7 @@ router.get('/', rejectUnauthenticated, (req, res) => {
     const id = req.user.id;
 
     // make queryText to query database
-    const queryText = `SELECT "user"."id", "user"."username", "kitchen_id", "kitchen"."name" FROM "user_kitchen"
+    const queryText = `SELECT "kitchen_id", "kitchen"."name" FROM "user_kitchen"
                         JOIN "user" ON "user_kitchen"."user_id" = "user"."id"
                         JOIN "kitchen" ON "user_kitchen"."kitchen_id" = "kitchen"."id"
                         WHERE "user"."id" = $1;`;
@@ -26,11 +26,30 @@ router.get('/', rejectUnauthenticated, (req, res) => {
         });
 }); // end GET route
 
-/**
- * POST route template
- */
-router.post('/', (req, res) => {
+// POST ROUTE TO ADD A NEW KITCHEN TO DATABASE
+router.post('/', rejectUnauthenticated, (req, res) => {
+    const id = req.user.id;
+    const kitchen = req.body.name;
+    console.log( 'Got POST kitchen on server', id, kitchen );
 
+    const firstQueryText = `INSERT INTO "kitchen" ("name")
+                        VALUES ($1) RETURNING "id";`;
+    const secondQueryText = `INSERT INTO "user_kitchen" ("user_id", "kitchen_id")
+                        VALUES($1, $2);`;
+
+    pool.query( firstQueryText, [ kitchen ] )
+        .then( (response) => {
+            console.log( 'Added kitchen to database', response.rows[0] );
+            pool.query( secondQueryText, [ id, response.rows[0].id ] )
+                .then( (response) => {
+                    console.log( 'Added kitchen to kitchen table and updated kitchen_user table' );
+                    res.sendStatus( 201 );
+                })
+        })
+        .catch( (error) => {
+            console.log( 'Error adding kitchen to databse', error );
+            res.sendStatus( 501 );
+        })
 });
 
 module.exports = router;

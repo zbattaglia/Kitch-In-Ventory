@@ -26,11 +26,6 @@ const Nav = (props) => (
           {props.user.id && (
           <>
           <div className="nav-item">
-            <Link to="/info">
-              Info Page
-            </Link>
-          </div>
-          <div className="nav-item">
             <Link to='/kitchen'>
               Your Kitchen
             </Link>
