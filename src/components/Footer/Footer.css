@@ -4,6 +4,6 @@ footer {
 
 #App-Footer {
     padding: 1rem;
-    position: fixed;
-    bottom: 0;
+    /* position: fixed;
+    bottom: 0; */
 }

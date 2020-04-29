@@ -16,7 +16,7 @@ const Nav = (props) => (
         <div className="nav-right" id="header-item">
           <div className="nav-item">
             {/* Show this link if they are logged in or not, */}
-            <Link className="nav-link" to="/home">
+            <Link to="/home">
             {/* but call this link 'Home' if they are logged in,
             and call this link 'Login / Register' if they are not */}
             {props.user.id ? 'Home' : 'Login / Register'}
@@ -26,22 +26,22 @@ const Nav = (props) => (
           {props.user.id && (
           <>
           <div className="nav-item">
-            <Link className="nav-link" to="/info">
+            <Link to="/info">
               Info Page
             </Link>
           </div>
           <div className="nav-item">
-            <Link className="nav-link" to='/kitchen'>
+            <Link to='/kitchen'>
               Your Kitchen
             </Link>
           </div>
           <div className="nav-item">
-            <Link className="nav-link" to='/list'>
+            <Link to='/list'>
               Shopping List
             </Link>
           </div>
           <div className="nav-item">
-            <Link className="nav-link" to='/home' onClick={() => props.dispatch({ type: 'LOGOUT' })}>
+            <Link to='/home' onClick={() => props.dispatch({ type: 'LOGOUT' })}>
               Log Out
             </Link>
           </div>
@@ -49,7 +49,7 @@ const Nav = (props) => (
         )}
           <div className="nav-item">
             {/* Always show about link */}
-            <Link className="nav-link" to="/about">
+            <Link to="/about">
               About
             </Link>
           </div>
