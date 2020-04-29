@@ -73,7 +73,7 @@ class LoginPage extends Component {
                       value={this.state.password}
                       onChange={this.handleInputChangeFor('password')}  
                     ></input><span className="icon"><i className="fa fa-wrapper fa-lock"></i></span>
-                </div>
+                  </div>
               </div>
                 <div className="btn-container">
                   <input

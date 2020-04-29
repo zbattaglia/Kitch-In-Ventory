@@ -15,7 +15,6 @@ import ProtectedRoute from '../ProtectedRoute/ProtectedRoute'
 
 import AboutPage from '../AboutPage/AboutPage';
 import UserPage from '../UserPage/UserPage';
-import InfoPage from '../InfoPage/InfoPage';
 import KitchenPage from '../KitchenPage/KitchenPage';
 import ShoppingListPage from '../ShoppingListPage/ShoppingListPage';
 import EditItemPage from '../EditItemPage/EditItemPage';
@@ -50,13 +49,6 @@ class App extends Component {
               exact
               path="/home"
               component={UserPage}
-            />
-            {/* This works the same as the other protected route, except that if the user is logged in,
-            they will see the info page instead. */}
-            <ProtectedRoute
-              exact
-              path="/info"
-              component={InfoPage}
             />
             {/* Link to the user's kitchen page */}
             <ProtectedRoute

@@ -13,7 +13,7 @@ import './userPage.css'
 class UserPage extends Component {
 
   componentDidMount(){
-    this.props.dispatch( { type: 'GET_KITCHEN', payload: this.props.user.id } );
+    this.props.dispatch( { type: 'GET_KITCHEN' } );
   }
 
   render(){
