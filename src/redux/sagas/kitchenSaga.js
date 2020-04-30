@@ -48,23 +48,24 @@ function* addKitchen(action) {
 // worker Saga: will be fired on "GET_KITCHEN" actions
 function* fetchInventory(action) {
   console.log( 'In fetchInventorySaga', action.payload );
-  // try {
+  try {
       
-  //   const config = {
-  //     headers: { 'Content-Type': 'application/json' },
-  //     withCredentials: true,
-  //   };
+    const config = {
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true,
+    };
 
-  //   // get all contents of specified kitchen for user, if logged in
-  //   // the config includes credentials which
-  //   // allow the server session to recognize the user
-  //   const response = yield axios.get('/api/kitchen/inventory', action.payload, config);
+    // get all contents of specified kitchen for user, if logged in
+    // the config includes credentials which
+    // allow the server session to recognize the user
+    // the selected kitchen id is put on the request url as param's
+    const response = yield axios.get(`/api/kitchen/inventory/${action.payload}`, config );
     
-  //   // once kitchens are returned, put them on redux state
-  //   yield put({ type: 'SET_KITCHEN', payload: response.data });
-  // } catch (error) {
-  //   console.log(`Error getting kitchen's inventory:`, error);
-  // }
+    // once kitchens are returned, put them on redux state
+    yield put({ type: 'SET_INVENTORY', payload: {inventory: response.data, selectedKitchen: action.payload } } );
+  } catch (error) {
+    console.log(`Error getting kitchen's inventory:`, error);
+  }
 }
 
 function* kitchenSaga() {
