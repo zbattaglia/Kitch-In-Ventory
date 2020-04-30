@@ -52,4 +52,26 @@ router.post('/', rejectUnauthenticated, (req, res) => {
         })
 });
 
+// GET ROUTE TO GET ALL ITEMS IN A USERS KITCHEN
+router.get('/inventory/:kitchenId', rejectUnauthenticated, (req, res) => {
+    const kitchenId = req.params.kitchenId;
+    // console.log( 'Getting items on server', req.user, req.params.kitchenId );
+
+    // make queryText to query database
+    const queryText = `SELECT "item_id",  "item"."name", "quantity", "minimum_quantity" FROM "kitchen_item"
+                        FULL OUTER JOIN "kitchen" ON "kitchen_item"."kitchen_id" = "kitchen"."id"
+                        FULL OUTER JOIN "item" ON "kitchen_item"."item_id" = "item"."id"
+                        WHERE "kitchen"."id" = $1;`;
+    // // query dataBase with query text for this user id
+    pool.query( queryText, [ kitchenId ] )
+        .then( (response) => {
+            console.log( 'Got kitchen inventory', response.rows );
+            res.send( response.rows );
+        })
+        .catch( (error) => {
+            console.log( 'Error Getting Kitchens', error );
+            res.sendStatus( 500 );
+        });
+}); // end GET route
+
 module.exports = router;
