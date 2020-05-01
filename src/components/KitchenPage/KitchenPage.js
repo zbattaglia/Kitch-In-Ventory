@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import AddItemForm from '../AddItemForm/AddItemForm';
 
+import 'cirrus-ui'
 import './KitchenPage.css';
 
 class KitchenPage extends Component {
@@ -30,39 +32,48 @@ class KitchenPage extends Component {
       }
     }; // end getKitchen
 
+    checkQuantity( quantity, minimum ) {
+      if( quantity <= minimum ) {
+        return 'selected';
+      }
+    }
+
     // displayInventory used for conditional rendering
     displayInventory( inventory ) {
       // only renders to the DOM if inventory is TRUE,
       // creates a table and for the inventory information
       if (inventory && inventory[0].item_id != null) {
-        return <table className="table">
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Quantity</th>
-              <th>Minimum</th>
-              <th></th>
-              <th></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            { inventory.map( item => 
-              <tr key={item.item_id}>
-                  <td>{item.name}</td>
-                    <td>{item.quantity} {item.unit}</td>
-                    <td>{item.minimum_quantity} {item.unit}</td>
-                    <td><button onClick={ (event) => this.handleClick(event, 'edit', item.item_id) }>EDIT</button></td>
-                    <td><button>ADD TO LIST</button></td>
-                    <td>
-                      <div className="btn-container">
-                        <button className="btn btn-animated" onClick={ (event) => this.handleClick(event, 'delete', item.item_id) }>DELETE</button>
-                      </div>
-                    </td>
+        return <div>
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Minimum</th>
+                <th></th>
+                <th></th>
+                <th></th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              { inventory.map( item => 
+                <tr key={item.item_id} className={this.checkQuantity(item.quantity, item.minimum_quantity)}>
+                    <td>{item.name}</td>
+                      <td>{item.quantity} {item.unit}</td>
+                      <td>{item.minimum_quantity} {item.unit}</td>
+                      <td><button onClick={ (event) => this.handleClick(event, 'edit', item.item_id) }>EDIT</button></td>
+                      <td><button>ADD TO LIST</button></td>
+                      <td>
+                        <div className="btn-container">
+                          <button className="btn btn-animated" onClick={ (event) => this.handleClick(event, 'delete', item.item_id) }>DELETE</button>
+                        </div>
+                      </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          <AddItemForm />
+        </div>
       }
       else {
         return <div>
@@ -77,6 +88,7 @@ class KitchenPage extends Component {
           </thead>
         </table>
         <p>Looks like your kitchen is empty! Start Adding some items below.</p>
+        <AddItemForm />
         </div>
       }
     }; // end displayInventory

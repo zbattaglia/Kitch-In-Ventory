@@ -60,10 +60,25 @@ function* editItem(action) {
   }
 }; // end editItem
 
+// worker Saga: will be fired on "ADD_ITEM" actions
+function* addItem(action) {
+  console.log( 'In add item Saga', action.payload );
+  try {
+    // post new item to kitchen list in database, if logged in
+    yield axios.post(`/api/item/${action.payload.kitchenId}`, action.payload.itemInfo );
+    
+    // once kitchen is added, get all kitchens for user and put them on redux state
+    yield put({ type: 'GET_INVENTORY', payload: action.payload.kitchenId });
+  } catch (error) {
+    console.log(`Error adding item:`, error);
+  }
+}; // end addItem Saga
+
 function* itemSaga() {
     yield takeLatest('SELECT_ITEM', selectEditItem);
     yield takeLatest('EDIT_ITEM', editItem);
     yield takeLatest('DELETE_ITEM', deleteItem);
+    yield takeLatest('ADD_ITEM', addItem);
 }
 
 export default itemSaga;
