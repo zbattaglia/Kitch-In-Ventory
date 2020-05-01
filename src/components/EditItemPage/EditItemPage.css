@@ -1,0 +1,17 @@
+#card-title{
+    text-align: center;
+}
+
+.card-head-title {
+    text-align: center;
+}
+
+#edit-item-card {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.action-bar {
+    display: flex;
+    justify-content: space-between;
+}

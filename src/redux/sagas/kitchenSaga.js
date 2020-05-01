@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // worker Saga: will be fired on "GET_KITCHEN" actions
 function* fetchKitchen(action) {
-    console.log( 'In fetchKitchenSaga' );
+    console.log( 'In fetchKitchenSaga', action );
   try {
       
     const config = {
@@ -59,7 +59,7 @@ function* fetchInventory(action) {
     // the config includes credentials which
     // allow the server session to recognize the user
     // the selected kitchen id is put on the request url as param's
-    const response = yield axios.get(`/api/kitchen/inventory/${action.payload}`, config );
+    const response = yield axios.get(`/api/kitchen/inventory/${action.payload}`, config )
     
     // once kitchens are returned, put them on redux state
     yield put({ type: 'SET_INVENTORY', payload: {inventory: response.data, selectedKitchen: action.payload } } );
