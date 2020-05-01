@@ -53,23 +53,10 @@ class EditItemPage extends Component {
       <div className="row">
         <div className="card col-5" id="edit-item-card">
           <div className="card-head">
-            <p>{JSON.stringify(this.props.editItem)}</p>
-            <h4 className="card-head-title" id="card-title">Edit Item</h4>
+            <h4 className="card-head-title" id="card-title">Edit {this.props.editItem.name}</h4>
           </div>
           <div className="content">
             <form>
-              <div className="row">
-                <div className="col-4 level-item">
-                  <p>Item Name:</p>
-                </div>
-                <div className="col-8 level-item">
-                  <input 
-                    type="text"
-                    value={this.state.name || '' } 
-                    onChange={ (event) => this.handleChangeFor( event, "name" )}
-                  />
-                </div>
-              </div>
               <div className="row">
                 <div className="col-4 level-item">
                   <p>Quantity:</p>

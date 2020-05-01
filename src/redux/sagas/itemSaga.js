@@ -23,7 +23,24 @@ function* selectEditItem(action) {
   } catch (error) {
     console.log(`Error getting selected item:`, error);
   }
-}
+}; //end selectEditItem
+
+function* deleteItem(action) {
+  console.log( 'In deleteItem Saga', action.payload );
+  try {
+
+    let itemId = action.payload.itemId;
+    let kitchenId = action.payload.kitchenId;
+
+    yield axios.delete( `/api/item/${itemId}${kitchenId}` );
+
+    yield put( { type: 'GET_INVENTORY', payload: kitchenId } );
+  }
+  catch( error ) {
+    console.log( 'Error deleting item', error );
+  }
+
+}; // end deleteItem
 
 function* editItem(action) {
   console.log( 'In editItemSaga', action );
@@ -41,12 +58,12 @@ function* editItem(action) {
   } catch (error) {
     console.log(`Error Editing Item:`, error);
   }
-}
+}; // end editItem
 
 function* itemSaga() {
     yield takeLatest('SELECT_ITEM', selectEditItem);
     yield takeLatest('EDIT_ITEM', editItem);
-
+    yield takeLatest('DELETE_ITEM', deleteItem);
 }
 
 export default itemSaga;
