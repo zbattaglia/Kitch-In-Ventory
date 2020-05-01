@@ -5,13 +5,20 @@ import './KitchenPage.css';
 
 class KitchenPage extends Component {
 
-    // on click of edit button, take user to edit item page
-    handleEdit = (event, itemId) => {
+    // on click of button, take user to edit item page for selected item,
+    // or delete item based on button clicked
+    handleClick = (event, buttonName, itemId) => {
       const kitchenId = this.props.selectedKitchen;
       // console.log( 'Got an edit', itemId );
-      this.props.dispatch( { type: 'SELECT_ITEM', payload: {itemId, kitchenId} } );
-      this.props.history.push( `/editItem/${itemId}`)
-    }
+      if( buttonName === 'edit' ) {
+        this.props.dispatch( { type: 'SELECT_ITEM', payload: {itemId, kitchenId} } );
+        this.props.history.push( `/editItem/${itemId}`)
+      }
+      else if( buttonName === 'delete' ) {
+        console.log( 'deleting item');
+        this.props.dispatch( { type: 'DELETE_ITEM', payload: {itemId, kitchenId } } );
+      }
+    }; // end handleClick
 
     // loops over all the kitchens the user is a part of and when finds matching id's with the selected kitchen,
     // returns that kitchen name
@@ -45,8 +52,13 @@ class KitchenPage extends Component {
                   <td>{item.name}</td>
                     <td>{item.quantity} {item.unit}</td>
                     <td>{item.minimum_quantity} {item.unit}</td>
-                    <td><button onClick={ (event) => this.handleEdit(event, item.item_id) }>EDIT</button>
-                    </td><td><button>ADD TO LIST</button></td>
+                    <td><button onClick={ (event) => this.handleClick(event, 'edit', item.item_id) }>EDIT</button></td>
+                    <td><button>ADD TO LIST</button></td>
+                    <td>
+                      <div className="btn-container">
+                        <button className="btn btn-animated" onClick={ (event) => this.handleClick(event, 'delete', item.item_id) }>DELETE</button>
+                      </div>
+                    </td>
               </tr>
             )}
           </tbody>
