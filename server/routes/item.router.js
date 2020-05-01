@@ -78,4 +78,80 @@ router.delete('/:itemId:kitchenId', rejectUnauthenticated, (req, res) => {
         });
 }); // end DELETE ROUTE
 
+// POST ROUTE TO ADD A NEW KITCHEN TO DATABASE
+router.post('/:id', rejectUnauthenticated, (req, res) => {
+    // extract current kitchen id from params
+    const kitchenId = req.params.id;
+    // destructure variables from req.body
+    const name = req.body.name;
+    const quantity = req.body.quantity;
+    const minimum_quantity = req.body.minimumQuantity;
+    const unit = req.body.unit;
+    let itemId;
+
+    console.log( 'Got POST new item on server', kitchenId, name, quantity, minimum_quantity, unit );
+
+    // need multiple queries
+    // first query to determine if the item already exists in database
+    const firstQueryText = 'SELECT "id" FROM "item" WHERE "name" = $1;';
+    // if item does not exist, it will be inserted into table
+    const secondQueryText = `INSERT INTO "item" ("name")
+                        VALUES ($1) RETURNING "id";`;
+    // final query to add item info, kitchen id and item id into kitchen table
+    const thirdQueryText = `INSERT INTO "kitchen_item" 
+                            ("kitchen_id", "item_id", "quantity", "minimum_quantity", "unit")
+                            VALUES($1, $2, $3, $4, $5);`;
+
+    pool.query( firstQueryText, [ name ] )
+        .then( (response) => {
+            console.log( 'queryOne returned', response.rows[0]);
+            // if item dows not exist in table the response from query one will be undefined
+            if( response.rows[0] === undefined ) {
+                console.log( 'Item does not exist in database' );
+                // then the second query will insert new item into table and get new id
+                pool.query( secondQueryText, [ name ] )
+                    .then( (response) => {
+                        itemId = response.rows[0].id;
+                    })
+            }
+            else {
+                // else the first query will return existing id
+                console.log( 'Item exists in database')
+                itemId = response.rows[0].id;
+            }
+        })
+        .then( (response) => {
+            // finally query the table with new or existing item id to insert information
+            // into kitchen_item table
+            pool.query( thirdQueryText, [ kitchenId, itemId, quantity, minimum_quantity, unit ] )
+            .then( (response) => {
+                console.log( 'Item added to database', response );
+                res.sendStatus( 201 );
+            })
+        })
+        .catch( (error) => {
+            console.log( 'Error adding item to database', error );
+        });
+
+    // const secondQueryText = `INSERT INTO "item" ("name")
+    //                     VALUES ($1) RETURNING "id";`;
+//     const thirdQueryText = `INSERT INTO "kitchen_item" 
+//                             ("kitchen_id", "item_id", "quantity", "minimum_quantity", "unit")
+//                             VALUES($1, $2, $3, $4, $5);`;
+
+//     pool.query( firstQueryText, [ name ] )
+//         .then( (response) => {
+//             console.log( 'Added item to database', response.rows[0] );
+//             pool.query( secondQueryText, [ kitchenId, response.rows[0].id, quantity, minimum_quantity, unit ] )
+//                 .then( (response) => {
+//                     console.log( 'Added item to kitchen_item table' );
+//                     res.sendStatus( 201 );
+//                 })
+//         })
+//         .catch( (error) => {
+//             console.log( 'Error adding item to databse', error );
+//             res.sendStatus( 501 );
+//         })
+});
+
 module.exports = router;
