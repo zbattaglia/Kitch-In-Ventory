@@ -5,8 +5,12 @@ import './KitchenPage.css';
 
 class KitchenPage extends Component {
 
-    handleEdit = () => {
-        this.props.history.push( '/editItem')
+    // on click of edit button, take user to edit item page
+    handleEdit = (event, itemId) => {
+      const kitchenId = this.props.selectedKitchen;
+      // console.log( 'Got an edit', itemId );
+      this.props.dispatch( { type: 'SELECT_ITEM', payload: {itemId, kitchenId} } );
+      this.props.history.push( `/editItem/${itemId}`)
     }
 
     // loops over all the kitchens the user is a part of and when finds matching id's with the selected kitchen,
@@ -23,12 +27,14 @@ class KitchenPage extends Component {
     displayInventory( inventory ) {
       // only renders to the DOM if inventory is TRUE,
       // creates a table and for the inventory information
-      if (inventory) {
+      if (inventory && inventory[0].item_id != null) {
         return <table className="table">
           <thead>
             <tr>
               <th>Item</th>
               <th>Quantity</th>
+              <th>Minimum</th>
+              <th></th>
               <th></th>
               <th></th>
             </tr>
@@ -36,15 +42,30 @@ class KitchenPage extends Component {
           <tbody>
             { inventory.map( item => 
               <tr key={item.item_id}>
-                  <td>{item.name}</td><
-                    td>{item.quantity}</td>
-                    <td>{item.minimum_quantity}</td>
-                    <td><button onClick={ this.handleEdit }>EDIT</button>
+                  <td>{item.name}</td>
+                    <td>{item.quantity} {item.unit}</td>
+                    <td>{item.minimum_quantity} {item.unit}</td>
+                    <td><button onClick={ (event) => this.handleEdit(event, item.item_id) }>EDIT</button>
                     </td><td><button>ADD TO LIST</button></td>
               </tr>
             )}
           </tbody>
         </table>
+      }
+      else {
+        return <div>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Quantity</th>
+              <th>Minimum</th>
+              <th></th>
+            </tr>
+          </thead>
+        </table>
+        <p>Looks like your kitchen is empty! Start Adding some items below.</p>
+        </div>
       }
     }; // end displayInventory
 

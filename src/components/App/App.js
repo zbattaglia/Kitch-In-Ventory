@@ -64,7 +64,7 @@ class App extends Component {
             />
             <ProtectedRoute
               exact
-              path="/editItem"
+              path="/editItem/:id"
               component={EditItemPage}
             />
             {/* If none of the other routes matched, we will show a 404. */}
