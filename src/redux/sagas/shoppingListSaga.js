@@ -27,9 +27,23 @@ function* putItemOnList(action) {
   }
 }; //end fetchShoppingList
 
+function* deleteItemFromList(action) { 
+  console.log( 'deleteItemFromList Saga', action );
+  try {
+
+    yield axios.delete(`/api/list/${action.payload.itemId}/${action.payload.listId}`, action.payload);
+    
+    // once item is deleted, update shopping list on redux state
+    yield put({ type: 'GET_SHOPPING_LIST' });
+  } catch (error) {
+    console.log(`Error deleting item from shopping list:`, error);
+  }
+}; //end deleteFromList
+
 function* shoppingListSaga() {
     yield takeLatest('GET_SHOPPING_LIST', fetchShoppingList);
     yield takeLatest('ADD_TO_SHOPPING_LIST', putItemOnList);
+    yield takeLatest('DELETE_FROM_SHOPPING_LIST', deleteItemFromList);
 
 }
 

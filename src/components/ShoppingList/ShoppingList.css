@@ -6,3 +6,7 @@
 .table-footer {
     background-color: gray;
 }
+
+.button-column {
+    width: 10%;
+}
