@@ -10,7 +10,8 @@ router.get('/', rejectUnauthenticated, (req, res) => {
     console.log( 'Getting shopping list for user with id:', id );
 
     // make queryText to query database to get all items on a list for the current user
-    const queryText = `SELECT "shopping_list"."name" AS "listName", "item"."name" AS "itemName", "shoppingList_item"."quantity" FROM "shoppingList_item"
+    const queryText = `SELECT "shopping_list"."name" AS "listName", "shopping_list"."id" AS "listId", 
+                        "item"."name" AS "itemName", "item"."id" AS "itemId", "shoppingList_item"."quantity" FROM "shoppingList_item"
                         FULL OUTER JOIN "item" ON "shoppingList_item"."item_id" = "item"."id"
                         FULL OUTER JOIN "shopping_list" ON "shoppingList_item"."list_id" = "shopping_list"."id"
                         FULL OUTER JOIN "kitchen" ON "kitchen"."shopping_list_id" = "shopping_list"."id"
@@ -25,27 +26,32 @@ router.get('/', rejectUnauthenticated, (req, res) => {
             // create a blank array for the formatted shopping list
             let shoppingList = [];
             // if there is anything returned on the list push an object into the list 
-            // the listName is the name of the first resonse row, and the items object contains the
-            // item and quantity from the first response.row
+            // the listName and id are the name and id of the first response row, and the items object contains the
+            // item, id, and quantity from the first response.row
             if( response.rows.length > 0 ){
                 shoppingList.push( {
-                    listName: response.rows[0].listName, 
-                    items: [ { itemName: response.rows[0].itemName, quantity: response.rows[0].quantity } ]
+                    listName: response.rows[0].listName,
+                    listId: response.rows[0].listId,
+                    items: [ { itemName: response.rows[0].itemName, itemId: response.rows[0].itemId,
+                        quantity: response.rows[0].quantity } ]
                 });
                 // loop over the remaining response rows
                 // if there list.name is the same as the list name already in the shoppingList array,
-                // ignore the name and push the item and quantity into the list of items in the shopping list
+                // ignore the name and listId and push the item, itemId and quantity into the list of items in the shopping list
                 for( let i = 1; i < response.rows.length; i++ ) {
                     if( response.rows[i].listName === shoppingList[shoppingList.length - 1].listName ) {
                         shoppingList[shoppingList.length - 1].items.push(
-                            {itemName: response.rows[i].itemName, quantity: response.rows[i].quantity }
+                            {itemName: response.rows[i].itemName, itemId: response.rows[i].itemId,
+                                quantity: response.rows[i].quantity }
                         )
                     }
                     // else create a new list object in the shopping list array, same as initial step
                     else {
                         shoppingList.push( {
                             listName: response.rows[i].listName,
-                            items: [ { itemName: response.rows[i].itemName, quantity: response.rows[i].quantity } ]
+                            listId: response.rows[i].listId,
+                            items: [ { itemName: response.rows[i].itemName, itemId: response.rows[i].itemId,
+                                quantity: response.rows[i].quantity } ]
                         })
                     }
                 }
@@ -86,5 +92,27 @@ router.post('/', rejectUnauthenticated, (req, res) => {
     //         res.sendStatus( 500 );
     //     });
 }); // end GET route
+
+router.delete('/:itemId/:listId', rejectUnauthenticated, (req, res) => {
+    // get current kitchen id from req.params
+    const itemId = req.params.itemId;
+    const listId = req.params.listId;
+ 
+    console.log( 'Deleting Item from shopping list on database', itemId, listId );
+
+    // make queryText to query database
+    const queryText = `DELETE FROM "shoppingList_item"
+                        WHERE "shoppingList_item"."item_id" = $1
+                        AND "shoppingList_item"."list_id" = $2;`;
+    // // query dataBase with query text
+    pool.query( queryText, [ itemId, listId ] )
+        .then( (response) => {
+            res.sendStatus( 200 );
+        })
+        .catch( (error) => {
+            console.log( 'Error Getting Kitchens', error );
+            res.sendStatus( 500 );
+        });
+}); // end DELETE ROUTE
 
 module.exports = router;
