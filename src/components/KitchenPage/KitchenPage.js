@@ -11,6 +11,7 @@ class KitchenPage extends Component {
     // or delete item based on button clicked
     handleClick = (event, buttonName, itemId) => {
       const kitchenId = this.props.selectedKitchen;
+      console.log( 'itemId in hanldeClick', itemId )
       // console.log( 'Got an edit', itemId );
       if( buttonName === 'edit' ) {
         this.props.dispatch( { type: 'SELECT_ITEM', payload: {itemId, kitchenId} } );
@@ -32,12 +33,13 @@ class KitchenPage extends Component {
       }
     }; // end getKitchen
 
-    checkQuantity( quantity, minimum ) {
-      if( quantity <= minimum ) {
+    checkQuantity( quantity, minimum, itemId) {
+      if( Number(quantity) <= Number(minimum) ) {
+        this.props.dispatch( { type: "ADD_TO_SHOPPING_LIST", payload: { itemId, kitchenId: this.props.selectedKitchen } } );
         return 'selected';
       }
     }
-
+ 
     // displayInventory used for conditional rendering
     displayInventory( inventory ) {
       // only renders to the DOM if inventory is TRUE,
@@ -57,7 +59,7 @@ class KitchenPage extends Component {
             </thead>
             <tbody>
               { inventory.map( item => 
-                <tr key={item.item_id} className={this.checkQuantity(item.quantity, item.minimum_quantity)}>
+                <tr key={item.item_id} className={this.checkQuantity(item.quantity, item.minimum_quantity, item.item_id)}>
                     <td>{item.name}</td>
                       <td>{item.quantity} {item.unit}</td>
                       <td>{item.minimum_quantity} {item.unit}</td>

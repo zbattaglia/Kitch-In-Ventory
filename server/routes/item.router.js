@@ -4,11 +4,11 @@ const { rejectUnauthenticated } = require('../modules/authentication-middleware'
 const router = express.Router();
 
 // GET ROUTE TO GET ALL USERS KITCHENS
-router.get('/:itemId:kitchenId', rejectUnauthenticated, (req, res) => {
+router.get('/:itemId/:kitchenId', rejectUnauthenticated, (req, res) => {
     // get current kitchen and item Id from req.params
     const kitchenId = req.params.kitchenId;
     const itemId = req.params.itemId;
-    // console.log( 'Getting item to edit:', itemId, 'in kitchen:', kitchenId );
+    console.log( 'Getting item to edit:', itemId, 'in kitchen:', kitchenId );
 
     // make queryText to query database
     const queryText = `SELECT "item"."id", "item"."name", "quantity", "unit", "minimum_quantity" FROM "kitchen_item"
@@ -56,11 +56,11 @@ router.put('/:kitchenId', rejectUnauthenticated, (req, res) => {
 }); // end PUT ROUTE
 
 // DELETE ROUTE to delete item form kitchen on database
-router.delete('/:itemId:kitchenId', rejectUnauthenticated, (req, res) => {
+router.delete('/:itemId/:kitchenId', rejectUnauthenticated, (req, res) => {
     // get current kitchen id from req.params
     const itemId = req.params.itemId;
     const kitchenId = req.params.kitchenId;
-
+ 
     console.log( 'Deleting Item from database', itemId, kitchenId );
 
     // // make queryText to query database
@@ -78,7 +78,7 @@ router.delete('/:itemId:kitchenId', rejectUnauthenticated, (req, res) => {
         });
 }); // end DELETE ROUTE
 
-// POST ROUTE TO ADD A NEW KITCHEN TO DATABASE
+// POST ROUTE TO ADD A NEW ITEM TO A KITCHEN ON DATABASE
 router.post('/:id', rejectUnauthenticated, (req, res) => {
     // extract current kitchen id from params
     const kitchenId = req.params.id;
@@ -87,7 +87,6 @@ router.post('/:id', rejectUnauthenticated, (req, res) => {
     const quantity = req.body.quantity;
     const minimum_quantity = req.body.minimumQuantity;
     const unit = req.body.unit;
-    let itemId;
 
     console.log( 'Got POST new item on server', kitchenId, name, quantity, minimum_quantity, unit );
 
@@ -111,47 +110,24 @@ router.post('/:id', rejectUnauthenticated, (req, res) => {
                 // then the second query will insert new item into table and get new id
                 pool.query( secondQueryText, [ name ] )
                     .then( (response) => {
-                        itemId = response.rows[0].id;
+                        pool.query( thirdQueryText, [ kitchenId, response.rows[0].id, quantity, minimum_quantity, unit ] )
+                        .then( (response) => {
+                            console.log( 'Item added to database', response );
+                            res.sendStatus( 201 );
+                        })
                     })
             }
             else {
-                // else the first query will return existing id
-                console.log( 'Item exists in database')
-                itemId = response.rows[0].id;
+                pool.query( thirdQueryText, [ kitchenId, response.rows[0].id, quantity, minimum_quantity, unit ] )
+                .then( (response) => {
+                    console.log( 'Item added to database', response );
+                    res.sendStatus( 201 );
+                })
             }
-        })
-        .then( (response) => {
-            // finally query the table with new or existing item id to insert information
-            // into kitchen_item table
-            pool.query( thirdQueryText, [ kitchenId, itemId, quantity, minimum_quantity, unit ] )
-            .then( (response) => {
-                console.log( 'Item added to database', response );
-                res.sendStatus( 201 );
-            })
         })
         .catch( (error) => {
             console.log( 'Error adding item to database', error );
         });
-
-    // const secondQueryText = `INSERT INTO "item" ("name")
-    //                     VALUES ($1) RETURNING "id";`;
-//     const thirdQueryText = `INSERT INTO "kitchen_item" 
-//                             ("kitchen_id", "item_id", "quantity", "minimum_quantity", "unit")
-//                             VALUES($1, $2, $3, $4, $5);`;
-
-//     pool.query( firstQueryText, [ name ] )
-//         .then( (response) => {
-//             console.log( 'Added item to database', response.rows[0] );
-//             pool.query( secondQueryText, [ kitchenId, response.rows[0].id, quantity, minimum_quantity, unit ] )
-//                 .then( (response) => {
-//                     console.log( 'Added item to kitchen_item table' );
-//                     res.sendStatus( 201 );
-//                 })
-//         })
-//         .catch( (error) => {
-//             console.log( 'Error adding item to databse', error );
-//             res.sendStatus( 501 );
-//         })
 });
 
 module.exports = router;

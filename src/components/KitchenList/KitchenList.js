@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import 'cirrus-ui';
 import './kitchenList.css';
 
-import AddKitchenButton from '../AddKitchenForm/AddKitchenForm';
+import AddKitchenForm from '../AddKitchenForm/AddKitchenForm';
 
 class KitchenList extends Component {
 
@@ -17,7 +17,7 @@ class KitchenList extends Component {
   render(){
     return (
         <div>
-            <AddKitchenButton />
+            <AddKitchenForm />
             <div className="card">
                 <div className="card-header">
                     <p className="card-head-title">{this.props.user.username}'s kitchens</p>

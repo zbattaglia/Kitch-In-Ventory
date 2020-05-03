@@ -1,0 +1,36 @@
+import { put, takeLatest } from 'redux-saga/effects';
+import axios from 'axios';
+
+function* fetchShoppingList(action) {
+    console.log( 'In shoppingListSaga', action );
+  try {
+
+    const response = yield axios.get(`/api/list`);
+    
+    // once list contents are returned, put them on redux state
+    yield put({ type: 'SET_SHOPPING_LIST', payload: response.data });
+  } catch (error) {
+    console.log(`Error getting shopping list:`, error);
+  }
+}; //end fetchShoppingList
+
+function* putItemOnList(action) { 
+  console.log( 'In putItemOnList Saga', action );
+  try {
+
+    yield axios.post(`/api/list/${action.payload.itemId}/${action.payload.kitchenId}`, action.payload);
+    
+    // once list contents are returned, put them on redux state
+    // yield put({ type: 'SET_SHOPPING_LIST', payload: response.data[0] });
+  } catch (error) {
+    console.log(`Error getting shopping list:`, error);
+  }
+}; //end fetchShoppingList
+
+function* shoppingListSaga() {
+    yield takeLatest('GET_SHOPPING_LIST', fetchShoppingList);
+    yield takeLatest('ADD_TO_SHOPPING_LIST', putItemOnList);
+
+}
+
+export default shoppingListSaga;

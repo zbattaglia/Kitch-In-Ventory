@@ -1,0 +1,90 @@
+const express = require('express');
+const pool = require('../modules/pool');
+const { rejectUnauthenticated } = require('../modules/authentication-middleware');
+const router = express.Router();
+
+// GET ROUTE TO GET SHOPPING LIST FOR USER
+router.get('/', rejectUnauthenticated, (req, res) => {
+    // set id to user id if authenticated from rejectUnauthenticated
+    const id = req.user.id;
+    console.log( 'Getting shopping list for user with id:', id );
+
+    // make queryText to query database to get all items on a list for the current user
+    const queryText = `SELECT "shopping_list"."name" AS "listName", "item"."name" AS "itemName", "shoppingList_item"."quantity" FROM "shoppingList_item"
+                        FULL OUTER JOIN "item" ON "shoppingList_item"."item_id" = "item"."id"
+                        FULL OUTER JOIN "shopping_list" ON "shoppingList_item"."list_id" = "shopping_list"."id"
+                        FULL OUTER JOIN "kitchen" ON "kitchen"."shopping_list_id" = "shopping_list"."id"
+                        FULL OUTER JOIN "user_kitchen" ON "user_kitchen"."kitchen_id" = "kitchen"."id"
+                        FULL OUTER JOIN "user" ON "user"."id" = "user_kitchen"."user_id"
+                        WHERE "user"."id" = $1;`;
+    // query dataBase with query text for this user id
+    pool.query( queryText, [ id ] )
+        .then( (response) => {
+            // console.log( 'Got shopping list for user', response.rows );
+            // format the response.rows into an array that will be easier for the client side to map over
+            // create a blank array for the formatted shopping list
+            let shoppingList = [];
+            // if there is anything returned on the list push an object into the list 
+            // the listName is the name of the first resonse row, and the items object contains the
+            // item and quantity from the first response.row
+            if( response.rows.length > 0 ){
+                shoppingList.push( {
+                    listName: response.rows[0].listName, 
+                    items: [ { itemName: response.rows[0].itemName, quantity: response.rows[0].quantity } ]
+                });
+                // loop over the remaining response rows
+                // if there list.name is the same as the list name already in the shoppingList array,
+                // ignore the name and push the item and quantity into the list of items in the shopping list
+                for( let i = 1; i < response.rows.length; i++ ) {
+                    if( response.rows[i].listName === shoppingList[shoppingList.length - 1].listName ) {
+                        shoppingList[shoppingList.length - 1].items.push(
+                            {itemName: response.rows[i].itemName, quantity: response.rows[i].quantity }
+                        )
+                    }
+                    // else create a new list object in the shopping list array, same as initial step
+                    else {
+                        shoppingList.push( {
+                            listName: response.rows[i].listName,
+                            items: [ { itemName: response.rows[i].itemName, quantity: response.rows[i].quantity } ]
+                        })
+                    }
+                }
+            }
+            // console.log( 'shoppingList =', shoppingList[0] );
+            // send formatted shopping list back to the client
+            res.send( shoppingList );
+        })
+        .catch( (error) => {
+            console.log( 'Error Getting Kitchens', error );
+            res.sendStatus( 500 );
+        });
+}); // end GET route
+
+// GET ROUTE TO GET SHOPPING LIST FOR USER
+router.post('/', rejectUnauthenticated, (req, res) => {
+    // set id to user id if authenticated from rejectUnauthenticated
+    const id = req.user.id;
+    const itemId = req.body.itemId;
+    console.log( 'Adding item to shopping list with item id:', itemId );
+
+    // make queryText to query database to get all items on a list for the current user
+    // const queryText = `SELECT "user"."id", "shopping_list"."name" AS "listName", "item"."name", "shoppingList_item"."quantity" FROM "shoppingList_item"
+    //                     FULL OUTER JOIN "item" ON "shoppingList_item"."item_id" = "item"."id"
+    //                     FULL OUTER JOIN "shopping_list" ON "shoppingList_item"."list_id" = "shopping_list"."id"
+    //                     FULL OUTER JOIN "kitchen" ON "kitchen"."shopping_list_id" = "shopping_list"."id"
+    //                     FULL OUTER JOIN "user_kitchen" ON "user_kitchen"."kitchen_id" = "kitchen"."id"
+    //                     FULL OUTER JOIN "user" ON "user"."id" = "user_kitchen"."user_id"
+    //                     WHERE "user"."id" = $1;`;
+    // // query dataBase with query text for this user id
+    // pool.query( queryText, [ id ] )
+    //     .then( (response) => {
+    //         console.log( 'Got shopping list for user', response.rows );
+    //         res.send( response.rows );
+    //     })
+    //     .catch( (error) => {
+    //         console.log( 'Error Getting Kitchens', error );
+    //         res.sendStatus( 500 );
+    //     });
+}); // end GET route
+
+module.exports = router;
