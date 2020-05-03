@@ -16,7 +16,7 @@ function* selectEditItem(action) {
     // get all item info for kitchen, if user logged in
     // the config includes credentials which
     // allow the server session to recognize the user
-    const response = yield axios.get(`/api/item/${itemId}${kitchenId}`, config);
+    const response = yield axios.get(`/api/item/${itemId}/${kitchenId}`, config);
     
     // once kitchens are returned, put them on redux state
     yield put({ type: 'SET_EDIT_ITEM', payload: response.data });
@@ -32,7 +32,7 @@ function* deleteItem(action) {
     let itemId = action.payload.itemId;
     let kitchenId = action.payload.kitchenId;
 
-    yield axios.delete( `/api/item/${itemId}${kitchenId}` );
+    yield axios.delete( `/api/item/${itemId}/${kitchenId}` );
 
     yield put( { type: 'GET_INVENTORY', payload: kitchenId } );
   }

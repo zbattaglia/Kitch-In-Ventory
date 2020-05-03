@@ -18,10 +18,15 @@ class AddKitchenForm extends Component {
 
     handleClick = () => {
         console.log( 'Got click on addKitchen', this.state);
-        this.props.dispatch( { type: 'ADD_KITCHEN', payload: this.state } );
-        this.setState({
-            name: '',
-        })
+        if( this.state.name !== '' ){
+            this.props.dispatch( { type: 'ADD_KITCHEN', payload: this.state } );
+            this.setState({
+                name: '',
+            })
+        }
+        else {
+            alert( 'Enter a name for your kitchen.' );
+        }
     }
 
   render(){

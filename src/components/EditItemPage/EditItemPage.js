@@ -51,6 +51,7 @@ class EditItemPage extends Component {
   render() {
     return (
       <div className="row">
+        {JSON.stringify(this.props.editItem)}
         <div className="card col-5" id="edit-item-card">
           <div className="card-head">
             <h4 className="card-head-title" id="card-title">Edit {this.props.editItem.name}</h4>

@@ -28,28 +28,43 @@ router.get('/', rejectUnauthenticated, (req, res) => {
 
 // POST ROUTE TO ADD A NEW KITCHEN TO DATABASE
 router.post('/', rejectUnauthenticated, (req, res) => {
+    // get user id and username
     const id = req.user.id;
+    const username = req.user.username;
+    // get kitchen name from req.body
     const kitchen = req.body.name;
-    console.log( 'Got POST kitchen on server', id, kitchen );
+    const listName = `${username}'s ${kitchen} Shopping List`;
+    console.log( 'Got POST kitchen on server user id:', id, 'kitchen name:', kitchen );
 
-    const firstQueryText = `INSERT INTO "kitchen" ("name")
-                        VALUES ($1) RETURNING "id";`;
-    const secondQueryText = `INSERT INTO "user_kitchen" ("user_id", "kitchen_id")
+    // requires two queries
+    // first to create new shopping list into database and get id back
+    const firstQueryText = `INSERT INTO "shopping_list" ("name")
+                            VALUES ($1) RETURNING "id";`;
+    // second to insert kitchen with new shopping list id into database and get id back
+    const secondQueryText = `INSERT INTO "kitchen" ("name", "shopping_list_id")
+                        VALUES ($1, $2) RETURNING "id";`;
+    // third query to associate kitchen with user in user_kitchen table
+    const thirdQueryText = `INSERT INTO "user_kitchen" ("user_id", "kitchen_id")
                         VALUES($1, $2);`;
 
-    pool.query( firstQueryText, [ kitchen ] )
+    pool.query( firstQueryText, [listName])
         .then( (response) => {
-            console.log( 'Added kitchen to database', response.rows[0] );
-            pool.query( secondQueryText, [ id, response.rows[0].id ] )
+            console.log( 'Created shopping list with id:', response.rows[0].id );
+            pool.query( secondQueryText, [ `${username}'s ${kitchen}`, response.rows[0].id ] )
                 .then( (response) => {
-                    console.log( 'Added kitchen to kitchen table and updated kitchen_user table' );
-                    res.sendStatus( 201 );
+                    console.log( 'Created kitchen with id:', response.rows[0].id );
+                    pool.query( thirdQueryText, [ id, response.rows[0].id ] )
+                        .then( (response) => {
+                            console.log( 'New kitchen created.' );
+                            res.sendStatus( 201 );
+                        })
                 })
         })
         .catch( (error) => {
-            console.log( 'Error adding kitchen to databse', error );
+            console.log( 'Error adding kitchen', error );
             res.sendStatus( 501 );
         })
+
 });
 
 // GET ROUTE TO GET ALL ITEMS IN A USERS KITCHEN
