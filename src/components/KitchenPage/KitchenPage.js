@@ -33,12 +33,14 @@ class KitchenPage extends Component {
       }
     }; // end getKitchen
 
-    checkQuantity( quantity, minimum, itemId) {
+    // check quantity compares the current quantity in the kitchen to the min for each item as .map occurs
+    checkQuantity( quantity, minimum) {
       if( Number(quantity) <= Number(minimum) ) {
-        this.props.dispatch( { type: "ADD_TO_SHOPPING_LIST", payload: { itemId, kitchenId: this.props.selectedKitchen } } );
+        // if the current quantity is below the min value,
+        // the item is highlighted on the iventory table
         return 'selected';
       }
-    }
+    }; // end checkQuantity
  
     // displayInventory used for conditional rendering
     displayInventory( inventory ) {
@@ -59,7 +61,7 @@ class KitchenPage extends Component {
             </thead>
             <tbody>
               { inventory.map( item => 
-                <tr key={item.item_id} className={this.checkQuantity(item.quantity, item.minimum_quantity, item.item_id)}>
+                <tr key={item.item_id} className={this.checkQuantity(item.quantity, item.minimum_quantity)}>
                     <td>{item.name}</td>
                       <td>{item.quantity} {item.unit}</td>
                       <td>{item.minimum_quantity} {item.unit}</td>
@@ -96,12 +98,12 @@ class KitchenPage extends Component {
     }; // end displayInventory
 
   render() {
-    // displayInventory called for conditional rendering
+    // get current kitchen
+    // then displayInventory called for conditional rendering
     return (
       <div className="content">
-          { this.getKitchen() }
-          {this.displayInventory(this.props.inventory)}
-
+        { this.getKitchen() }
+        { this.displayInventory(this.props.inventory) }
       </div>
     );
   }

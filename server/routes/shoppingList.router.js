@@ -115,4 +115,75 @@ router.delete('/:itemId/:listId', rejectUnauthenticated, (req, res) => {
         });
 }); // end DELETE ROUTE
 
+// Route to update shopping list with items at or below their minimum specified quantity
+router.put('/update/:kitchenId', rejectUnauthenticated, (req, res) => {
+    // get current kitchen id from req.params
+    // get inventory from req.body
+    // create variable for items in inventory that are not to be on shopping list,
+    // and items that are
+    const kitchenId = req.params.kitchenId;
+    const inventory = req.body;
+    const removeFromList = [];
+    const addToList = [];
+
+    // map over inventory and if items are at or below their minimum quantity,
+    // add to list of items to be added to shopping list
+    // else add to list of items that should not be on shopping list
+    inventory.map( item => {
+        if( item.quantity <= item.minimum_quantity ) {
+            addToList.push( item );
+        }
+        else {
+            removeFromList.push( item );
+        }
+    }); // end map
+    console.log( `Updating shopping list for kitchen with id ${kitchenId}.
+                    Adding items: ${addToList} and removing: ${removeFromList}`, inventory );
+
+    // first query uses kithen id to get the current shopping list id
+    // the second query deletes items that no loner need to be on the list
+    // the final query then adds all items that should be on the list
+    const queryTextOne = `SELECT "shopping_list_id" FROM "kitchen"
+                            WHERE "kitchen"."id" = $1;`;
+    const queryTextTwo = `DELETE FROM "shoppingList_item"
+                            WHERE "shoppingList_item"."list_id" = $1
+                            AND "shoppingList_item"."item_id" = $2;`;
+    const queryTextThree = `SELECT * FROM "shoppingList_item"
+                            WHERE "shoppingList_item"."list_id" = $1
+                            AND "shoppingList_item"."item_id" = $2;`
+    const queryTextFour = `INSERT INTO "shoppingList_item" ("list_id", "item_id")
+                            VALUES($1, $2);`;
+    // // query dataBase with query text
+    pool.query( queryTextOne, [ kitchenId ] )
+        .then( (response) => {
+            console.log( 'Got Shopping list id', response.rows );
+            for( removeItem of removeFromList ) {
+                pool.query( queryTextTwo, [ response.rows[0].shopping_list_id, removeItem.item_id ] )
+            };
+            for( addItem of addToList ) {
+                let listId = response.rows[0].shopping_list_id;
+                pool.query( queryTextThree, [ listId, addItem.item_id ] )
+                    .then( (response) => {
+                        console.log( 'result of queryTextThree', response.rows[0] );
+                        if( response.rows[0] === undefined ) {
+                            pool.query( queryTextFour, [ listId, addItem.item_id ] )
+                                .then( (response) => {
+                                    res.sendStatus( 200 );
+                                })
+                                .catch( (error) => {
+                                    console.log( 'Error updating shopping list', error );
+                                })
+                        }
+                    })
+            };
+            // res.sendStatus( 200 );
+        })
+        .catch( (error) => {
+            console.log( 'Error Updating shopping List', error );
+            res.sendStatus( 500 );
+        });
+}); // end PUT ROUTE
+
+
+
 module.exports = router;

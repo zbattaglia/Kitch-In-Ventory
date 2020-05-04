@@ -14,6 +14,19 @@ function* fetchShoppingList(action) {
   }
 }; //end fetchShoppingList
 
+function* updateShoppingList(action) {
+  console.log( 'In updateShoppingList Saga', action );
+  try {
+
+    yield axios.put(`/api/list/update/${action.payload.selectedKitchen}`, action.payload.inventory);
+    
+    // once list contents are returned, put them on redux state
+    // yield put({ type: 'SET_SHOPPING_LIST', payload: response.data });
+  } catch (error) {
+    console.log(`Error getting shopping list:`, error);
+  }
+}; //end fetchShoppingList
+
 function* putItemOnList(action) { 
   console.log( 'In putItemOnList Saga', action );
   try {
@@ -42,6 +55,7 @@ function* deleteItemFromList(action) {
 
 function* shoppingListSaga() {
     yield takeLatest('GET_SHOPPING_LIST', fetchShoppingList);
+    yield takeLatest('UPDATE_SHOPPING_LIST', updateShoppingList);
     yield takeLatest('ADD_TO_SHOPPING_LIST', putItemOnList);
     yield takeLatest('DELETE_FROM_SHOPPING_LIST', deleteItemFromList);
 

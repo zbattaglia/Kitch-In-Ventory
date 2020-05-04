@@ -63,6 +63,7 @@ function* fetchInventory(action) {
     
     // once kitchens are returned, put them on redux state
     yield put({ type: 'SET_INVENTORY', payload: {inventory: response.data, selectedKitchen: action.payload } } );
+    yield put({ type: 'UPDATE_SHOPPING_LIST', payload: {inventory: response.data, selectedKitchen: action.payload } } );
   } catch (error) {
     console.log(`Error getting kitchen's inventory:`, error);
   }
