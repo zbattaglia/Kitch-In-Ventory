@@ -125,16 +125,18 @@ router.put('/update/:kitchenId', rejectUnauthenticated, (req, res) => {
     const inventory = req.body;
     const removeFromList = [];
     const addToList = [];
-
+    console.log( 'The inventory is:', inventory );
     // map over inventory and if items are at or below their minimum quantity,
     // add to list of items to be added to shopping list
     // else add to list of items that should not be on shopping list
     inventory.map( item => {
-        if( item.quantity <= item.minimum_quantity ) {
-            addToList.push( item );
-        }
-        else {
-            removeFromList.push( item );
+        if( item.item_id != null ) {
+            if( item.quantity <= item.minimum_quantity ) {
+                addToList.push( item );
+            }
+            else {
+                removeFromList.push( item );
+            }
         }
     }); // end map
     console.log( `Updating shopping list for kitchen with id ${kitchenId}.
