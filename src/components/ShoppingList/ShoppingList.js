@@ -4,6 +4,24 @@ import './ShoppingList.css';
 
 class ShoppingList extends Component {
 
+  // checkMin will check if item is below it's min value and should not be removed from list
+  // if not below min, return button to allow user to remove from list,
+  // if below min, leave td blank
+  checkMin( itemId, listId, belowMin ) {
+    if ( !belowMin ) {
+      return (
+        <button
+        className="btn btn-animated"
+        onClick={(event) => this.handleClickFor( 'delete', itemId, listId )}>
+          REMOVE FROM LIST
+        </button>
+      )
+    }
+    else {
+      return(<></>)
+    }
+  }
+
   handleClickFor = ( buttonName, itemId, listId ) => {
     console.log( 'Got click on button', buttonName );
     if( buttonName === 'delete' ) {
@@ -56,11 +74,7 @@ class ShoppingList extends Component {
                         </td>
                         <td><button className="btn btn-animated">BOUGHT_BTN</button></td>
                         <td>
-                          <button
-                          className="btn btn-animated"
-                          onClick={(event) => this.handleClickFor( 'delete', item.itemId, kitchenList.listId )}>
-                            REMOVE FROM LIST
-                          </button>
+                          {this.checkMin( item.itemId, kitchenList.listId, item.belowMin )}
                         </td>
                       </tr>
                       )}
