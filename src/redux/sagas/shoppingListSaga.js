@@ -56,7 +56,7 @@ function* deleteItemFromList(action) {
   console.log( 'deleteItemFromList Saga', action );
   try {
 
-    yield axios.delete(`/api/list/${action.payload.itemId}/${action.payload.listId}`, action.payload);
+    yield axios.delete(`/api/list/${action.payload.itemId}/${action.payload.listId}` );
     
     // once item is deleted, update shopping list on redux state
     yield put({ type: 'GET_SHOPPING_LIST' });

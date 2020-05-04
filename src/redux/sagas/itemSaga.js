@@ -60,6 +60,25 @@ function* editItem(action) {
   }
 }; // end editItem
 
+function* boughtItem(action) {
+  console.log( 'In boughtItem Saga', action );
+  try {
+    const listId = action.payload.listId;
+    const itemId = action.payload.itemId;
+    const kitchenId = action.payload.kitchenId;
+    const quantity = action.payload.quantity;
+
+    console.log( 'editing item for kitchen:', kitchenId );
+    // make axios PUT request to server to add quantity to item in database
+    const response = yield axios.put(`/api/item/bought/${listId}/${itemId}`, {quantity} );
+
+    // once item is edited, GET the items again.
+    yield put({ type: 'GET_INVENTORY', payload: kitchenId });
+  } catch (error) {
+    console.log(`Error Editing Item:`, error);
+  }
+}; // end editItem
+
 // worker Saga: will be fired on "ADD_ITEM" actions
 function* addItem(action) {
   console.log( 'In add item Saga', action.payload );
@@ -79,6 +98,7 @@ function* itemSaga() {
     yield takeLatest('EDIT_ITEM', editItem);
     yield takeLatest('DELETE_ITEM', deleteItem);
     yield takeLatest('ADD_ITEM', addItem);
+    yield takeLatest('BOUGHT_ITEM', boughtItem);
 }
 
 export default itemSaga;

@@ -148,4 +148,40 @@ router.post('/:id', rejectUnauthenticated, (req, res) => {
         });
 });
 
+// PUT ROUTE to update specific item on database`/bought/${listId}/${itemId}`
+router.put('/bought/:listId/:itemId', rejectUnauthenticated, (req, res) => {
+    // get id's from params and quantity from req.body
+    const listId = req.params.listId;
+    const itemId = req.params.itemId;
+    const quantity = Number(req.body.quantity);
+    console.log( 'Bought an item', listId, itemId, quantity )
+    
+    queryTextOne = `SELECT "kitchen"."id" FROM "kitchen"
+                    WHERE "kitchen"."shopping_list_id" = $1;`;
+    queryTextTwo = `SELECT "quantity" FROM "kitchen_item"
+                    WHERE "kitchen_item"."kitchen_id" = $1
+                    AND "kitchen_item"."item_id" = $2;`;
+    queryTextThree = `UPDATE "kitchen_item" SET "quantity" = $1
+                        WHERE "kitchen_item"."kitchen_id" = $2
+                        AND "kitchen_item"."item_id" = $3;`
+
+    pool.query( queryTextOne, [ listId ] )
+        .then( (response) => {
+            const kitchenId = response.rows[0].id;
+            pool.query( queryTextTwo, [ kitchenId, itemId ] )
+                .then( (response) => {
+                    const updatedQuantity = quantity + Number(response.rows[0].quantity);
+                    pool.query( queryTextThree, [ updatedQuantity, kitchenId, itemId ] )
+                        .then( (response) => {
+                            res.sendStatus( 200 );
+                        })
+                        .catch( (error) => {
+                            console.log( 'Error updating quantity of bought item', error );
+                            res.sendStatus( 500 );
+                        })
+                })
+        })
+
+}); // end PUT ROUTE
+
 module.exports = router;
