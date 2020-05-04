@@ -189,6 +189,30 @@ router.put('/update/:kitchenId', rejectUnauthenticated, (req, res) => {
         });
 }); // end PUT ROUTE
 
+// Route to update item on shopping list with specified quantity
+router.put('/edit/:itemId/:listId', rejectUnauthenticated, (req, res) => {
+    // extract id's from params and quantity from req.body
+    const itemId = req.params.itemId;
+    const listId = req.params.listId;
+    const quantity = req.body.quantity;
+    console.log( `Changing quantity of item ${itemId} to ${quantity} on list ${listId}` );
+
+    // query the database
+    let queryText = `UPDATE "shoppingList_item"
+                    SET "quantity" = $1
+                    WHERE "list_id"= $2 AND "item_id" = $3;`;
+
+    pool.query( queryText, [ quantity, listId, itemId ] )
+        .then( (response) => {
+            res.sendStatus( 200 );
+        })
+        .catch( (error) => {
+            console.log( 'Error editing item on database', error );
+            res.sendStatus( 500 );
+        });
+
+}); // end PUT ROUTE
+
 
 
 module.exports = router;

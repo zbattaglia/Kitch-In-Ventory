@@ -14,6 +14,18 @@ function* fetchShoppingList(action) {
   }
 }; //end fetchShoppingList
 
+function* editItemOnList(action) {
+  console.log( 'In editItemOnList Saga', action );
+  try {
+    yield axios.put(`/api/list/edit/${action.payload.itemId}/${action.payload.listId}`, {quantity: action.payload.quantity} );
+    
+    // when edit is successful, refresh the shopping list
+    yield put({ type: 'GET_SHOPPING_LIST' });
+  } catch (error) {
+    console.log(`Error getting shopping list:`, error);
+  }
+}; //end editItemOnList
+
 function* updateShoppingList(action) {
   console.log( 'In updateShoppingList Saga', action );
   try {
@@ -58,6 +70,8 @@ function* shoppingListSaga() {
     yield takeLatest('UPDATE_SHOPPING_LIST', updateShoppingList);
     yield takeLatest('ADD_TO_SHOPPING_LIST', putItemOnList);
     yield takeLatest('DELETE_FROM_SHOPPING_LIST', deleteItemFromList);
+    yield takeLatest('EDIT_SHOPPING_LIST', editItemOnList);
+
 }
 
 export default shoppingListSaga;
