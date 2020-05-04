@@ -62,7 +62,7 @@ class ShoppingList extends Component {
   }
 
   //Listens for a button click on the page
-  handleClickFor = ( buttonName, itemId, quantity, listId ) => {
+  handleClickFor = ( buttonName, itemId, listId, quantity, kitchenId ) => {
     console.log( 'Got click on button', buttonName );
     // if the clicked button is the delete button,
     // dispatches an action to delete item from shopping list
@@ -95,7 +95,14 @@ class ShoppingList extends Component {
           editQuantity: quantity,
         })
       }
+    };
+
+    if( buttonName === 'bought' ) {
+      console.log( 'Bought Item', itemId, listId, quantity, kitchenId );
+      this.props.dispatch( { type: "BOUGHT_ITEM", payload: { itemId, listId, quantity, kitchenId } } );
+      this.props.dispatch( { type: 'DELETE_FROM_SHOPPING_LIST', payload: { itemId, listId } } );
     }
+
   }; // end handleClickFor
 
   componentDidMount() {
@@ -131,11 +138,17 @@ class ShoppingList extends Component {
                         <td>
                           <button
                             className="btn btn-animated"
-                            onClick={(event) => this.handleClickFor( 'edit', item.itemId, item.quantity, kitchenList.listId )}>
+                            onClick={(event) => this.handleClickFor( 'edit', item.itemId, kitchenList.listId, item.quantity, this.props.kitchen )}>
                               EDIT
                           </button>
                         </td>
-                        <td><button className="btn btn-animated">BOUGHT_BTN</button></td>
+                        <td>
+                          <button
+                            className="btn btn-animated"
+                            onClick={(event) => this.handleClickFor( 'bought', item.itemId, kitchenList.listId, item.quantity, this.props.kitchen )}>
+                              BOUGHT
+                          </button>
+                        </td>
                         <td>
                           {this.checkMin( item.itemId, kitchenList.listId, item.belowMin )}
                         </td>
@@ -161,6 +174,7 @@ class ShoppingList extends Component {
 
 const mapStateToProps = state => ({
   shoppingList: state.shoppingList,
+  kitchen: state.inventory.selectedKitchen,
 });
 
 export default connect(mapStateToProps)(ShoppingList);
