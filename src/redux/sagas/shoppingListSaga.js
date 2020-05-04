@@ -58,7 +58,6 @@ function* shoppingListSaga() {
     yield takeLatest('UPDATE_SHOPPING_LIST', updateShoppingList);
     yield takeLatest('ADD_TO_SHOPPING_LIST', putItemOnList);
     yield takeLatest('DELETE_FROM_SHOPPING_LIST', deleteItemFromList);
-
 }
 
 export default shoppingListSaga;

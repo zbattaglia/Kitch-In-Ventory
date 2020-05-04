@@ -55,7 +55,7 @@ router.put('/:kitchenId', rejectUnauthenticated, (req, res) => {
         });
 }); // end PUT ROUTE
 
-// DELETE ROUTE to delete item form kitchen on database
+// DELETE ROUTE to delete item from kitchen on database
 router.delete('/:itemId/:kitchenId', rejectUnauthenticated, (req, res) => {
     // get current kitchen id from req.params
     const itemId = req.params.itemId;
@@ -63,19 +63,37 @@ router.delete('/:itemId/:kitchenId', rejectUnauthenticated, (req, res) => {
  
     console.log( 'Deleting Item from database', itemId, kitchenId );
 
-    // // make queryText to query database
-    const queryText = `DELETE FROM "kitchen_item"
+    // // make queryText to query database and delete item from kitchen
+    const queryTextOne = `DELETE FROM "kitchen_item"
                         WHERE "kitchen_item"."kitchen_id" = $1
                         AND "kitchen_item"."item_id" = $2;`;
+    // second query is to get shopping list associated with selected kitchen
+    const queryTextTwo = `SELECT "shopping_list_id" FROM "kitchen"
+                            WHERE "kitchen"."id" = $1;`;
+    // final query is to delete item from list if it is on the list currently
+    const queryTextThree = `DELETE FROM "shoppingList_item"
+                            WHERE "shoppingList_item"."list_id" = $1
+                            AND "shoppingList_item"."item_id" = $2;`;
     // // query dataBase with query text
-    pool.query( queryText, [ kitchenId, itemId ] )
+    pool.query( queryTextOne, [ kitchenId, itemId ] )
         .then( (response) => {
-            res.sendStatus( 200 );
+            pool.query( queryTextTwo, [ kitchenId ] )
+                .then( (response) => {
+                    pool.query( queryTextThree, [ response.rows[0].shopping_list_id, itemId ] )
+                        .then( (response) => {
+                            console.log( 'Deleted Item from kitchen and shoppinglist' );
+                            res.sendStatus( 200 );
+                        })
+                        .catch( (error) => {
+                            console.log( 'Error deleting item from both kitchen and list', error );
+                        })
+                })
         })
         .catch( (error) => {
-            console.log( 'Error Getting Kitchens', error );
-            res.sendStatus( 500 );
+            console.log( 'Error Deleing item from kitchen', error );
+            // res.sendStatus( 500 );
         });
+
 }); // end DELETE ROUTE
 
 // POST ROUTE TO ADD A NEW ITEM TO A KITCHEN ON DATABASE
