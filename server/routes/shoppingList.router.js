@@ -11,7 +11,8 @@ router.get('/', rejectUnauthenticated, (req, res) => {
 
     // make queryText to query database to get all items on a list for the current user
     const queryText = `SELECT "shopping_list"."name" AS "listName", "shopping_list"."id" AS "listId", 
-                        "item"."name" AS "itemName", "item"."id" AS "itemId", "shoppingList_item"."quantity" FROM "shoppingList_item"
+                        "item"."name" AS "itemName", "item"."id" AS "itemId", "shoppingList_item"."belowMin",
+                        "shoppingList_item"."quantity" FROM "shoppingList_item"
                         FULL OUTER JOIN "item" ON "shoppingList_item"."item_id" = "item"."id"
                         FULL OUTER JOIN "shopping_list" ON "shoppingList_item"."list_id" = "shopping_list"."id"
                         FULL OUTER JOIN "kitchen" ON "kitchen"."shopping_list_id" = "shopping_list"."id"
@@ -33,7 +34,7 @@ router.get('/', rejectUnauthenticated, (req, res) => {
                     listName: response.rows[0].listName,
                     listId: response.rows[0].listId,
                     items: [ { itemName: response.rows[0].itemName, itemId: response.rows[0].itemId,
-                        quantity: response.rows[0].quantity } ]
+                        quantity: response.rows[0].quantity, belowMin: response.rows[0].belowMin } ]
                 });
                 // loop over the remaining response rows
                 // if there list.name is the same as the list name already in the shoppingList array,
@@ -42,7 +43,7 @@ router.get('/', rejectUnauthenticated, (req, res) => {
                     if( response.rows[i].listName === shoppingList[shoppingList.length - 1].listName ) {
                         shoppingList[shoppingList.length - 1].items.push(
                             {itemName: response.rows[i].itemName, itemId: response.rows[i].itemId,
-                                quantity: response.rows[i].quantity }
+                                quantity: response.rows[i].quantity, belowMin: response.rows[i].belowMin }
                         )
                     }
                     // else create a new list object in the shopping list array, same as initial step
@@ -51,7 +52,7 @@ router.get('/', rejectUnauthenticated, (req, res) => {
                             listName: response.rows[i].listName,
                             listId: response.rows[i].listId,
                             items: [ { itemName: response.rows[i].itemName, itemId: response.rows[i].itemId,
-                                quantity: response.rows[i].quantity } ]
+                                quantity: response.rows[i].quantity, belowMin: response.rows[0].belowMin } ]
                         })
                     }
                 }
@@ -131,10 +132,12 @@ router.put('/update/:kitchenId', rejectUnauthenticated, (req, res) => {
     // else add to list of items that should not be on shopping list
     inventory.map( item => {
         if( item.item_id != null ) {
-            if( item.quantity <= item.minimum_quantity ) {
+            if( Number(item.quantity) <= Number(item.minimum_quantity) ) {
+                item.belowMin = true;
                 addToList.push( item );
             }
             else {
+                item.belowMin = false;
                 removeFromList.push( item );
             }
         }
@@ -153,8 +156,8 @@ router.put('/update/:kitchenId', rejectUnauthenticated, (req, res) => {
     const queryTextThree = `SELECT * FROM "shoppingList_item"
                             WHERE "shoppingList_item"."list_id" = $1
                             AND "shoppingList_item"."item_id" = $2;`
-    const queryTextFour = `INSERT INTO "shoppingList_item" ("list_id", "item_id")
-                            VALUES($1, $2);`;
+    const queryTextFour = `INSERT INTO "shoppingList_item" ("list_id", "item_id", "belowMin")
+                            VALUES($1, $2, $3);`;
     // // query dataBase with query text
     pool.query( queryTextOne, [ kitchenId ] )
         .then( (response) => {
@@ -168,7 +171,7 @@ router.put('/update/:kitchenId', rejectUnauthenticated, (req, res) => {
                     .then( (response) => {
                         console.log( 'result of queryTextThree', response.rows[0] );
                         if( response.rows[0] === undefined ) {
-                            pool.query( queryTextFour, [ listId, addItem.item_id ] )
+                            pool.query( queryTextFour, [ listId, addItem.item_id, addItem.belowMin ] )
                                 .then( (response) => {
                                     res.sendStatus( 200 );
                                 })
