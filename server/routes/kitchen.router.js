@@ -73,7 +73,7 @@ router.get('/inventory/:kitchenId', rejectUnauthenticated, (req, res) => {
     // console.log( 'Getting items on server', req.user, req.params.kitchenId );
 
     // make queryText to query database
-    const queryText = `SELECT "item_id",  "item"."name", "quantity", "unit", "minimum_quantity" FROM "kitchen_item"
+    const queryText = `SELECT "item_id",  "item"."name", "quantity", "unit", "minimum_quantity", "added_to_list" FROM "kitchen_item"
                         FULL OUTER JOIN "kitchen" ON "kitchen_item"."kitchen_id" = "kitchen"."id"
                         FULL OUTER JOIN "item" ON "kitchen_item"."item_id" = "item"."id"
                         WHERE "kitchen"."id" = $1;`;
