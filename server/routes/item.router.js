@@ -161,9 +161,9 @@ router.put('/bought/:listId/:itemId', rejectUnauthenticated, (req, res) => {
     queryTextTwo = `SELECT "quantity" FROM "kitchen_item"
                     WHERE "kitchen_item"."kitchen_id" = $1
                     AND "kitchen_item"."item_id" = $2;`;
-    queryTextThree = `UPDATE "kitchen_item" SET "quantity" = $1
-                        WHERE "kitchen_item"."kitchen_id" = $2
-                        AND "kitchen_item"."item_id" = $3;`
+    queryTextThree = `UPDATE "kitchen_item" SET "quantity" = $1, "added_to_list" = $2
+                        WHERE "kitchen_item"."kitchen_id" = $3
+                        AND "kitchen_item"."item_id" = $4;`
 
     pool.query( queryTextOne, [ listId ] )
         .then( (response) => {
@@ -171,7 +171,7 @@ router.put('/bought/:listId/:itemId', rejectUnauthenticated, (req, res) => {
             pool.query( queryTextTwo, [ kitchenId, itemId ] )
                 .then( (response) => {
                     const updatedQuantity = quantity + Number(response.rows[0].quantity);
-                    pool.query( queryTextThree, [ updatedQuantity, kitchenId, itemId ] )
+                    pool.query( queryTextThree, [ updatedQuantity, false, kitchenId, itemId ] )
                         .then( (response) => {
                             res.sendStatus( 200 );
                         })

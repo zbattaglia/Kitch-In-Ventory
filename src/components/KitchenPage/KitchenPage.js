@@ -21,6 +21,11 @@ class KitchenPage extends Component {
         console.log( 'deleting item');
         this.props.dispatch( { type: 'DELETE_ITEM', payload: {itemId, kitchenId } } );
       }
+      // else buttonName = add
+      else {
+        console.log( 'Adding item to shopping list' );
+        this.props.dispatch( { type: 'ADD_TO_SHOPPING_LIST', payload: { itemId, kitchenId } } );
+      }
     }; // end handleClick
 
     // loops over all the kitchens the user is a part of and when finds matching id's with the selected kitchen,
@@ -65,11 +70,31 @@ class KitchenPage extends Component {
                     <td>{item.name}</td>
                       <td>{item.quantity} {item.unit}</td>
                       <td>{item.minimum_quantity} {item.unit}</td>
-                      <td><button onClick={ (event) => this.handleClick(event, 'edit', item.item_id) }>EDIT</button></td>
-                      <td><button>ADD TO LIST</button></td>
                       <td>
                         <div className="btn-container">
-                          <button className="btn btn-animated" onClick={ (event) => this.handleClick(event, 'delete', item.item_id) }>DELETE</button>
+                          <button
+                            className="btn btn-animated"
+                            onClick={ (event) => this.handleClick(event, 'edit', item.item_id) }>
+                              EDIT
+                          </button>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="btn-container">
+                          <button
+                            className="btn btn-animated"
+                            onClick={ (event) => this.handleClick(event, 'add', item.item_id  ) }>
+                              ADD TO LIST
+                          </button>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="btn-container">
+                          <button
+                            className="btn btn-animated"
+                            onClick={ (event) => this.handleClick(event, 'delete', item.item_id) }>
+                              DELETE
+                          </button>
                         </div>
                       </td>
                 </tr>

@@ -67,33 +67,6 @@ router.get('/', rejectUnauthenticated, (req, res) => {
         });
 }); // end GET route
 
-// GET ROUTE TO GET SHOPPING LIST FOR USER
-router.post('/', rejectUnauthenticated, (req, res) => {
-    // set id to user id if authenticated from rejectUnauthenticated
-    const id = req.user.id;
-    const itemId = req.body.itemId;
-    console.log( 'Adding item to shopping list with item id:', itemId );
-
-    // make queryText to query database to get all items on a list for the current user
-    // const queryText = `SELECT "user"."id", "shopping_list"."name" AS "listName", "item"."name", "shoppingList_item"."quantity" FROM "shoppingList_item"
-    //                     FULL OUTER JOIN "item" ON "shoppingList_item"."item_id" = "item"."id"
-    //                     FULL OUTER JOIN "shopping_list" ON "shoppingList_item"."list_id" = "shopping_list"."id"
-    //                     FULL OUTER JOIN "kitchen" ON "kitchen"."shopping_list_id" = "shopping_list"."id"
-    //                     FULL OUTER JOIN "user_kitchen" ON "user_kitchen"."kitchen_id" = "kitchen"."id"
-    //                     FULL OUTER JOIN "user" ON "user"."id" = "user_kitchen"."user_id"
-    //                     WHERE "user"."id" = $1;`;
-    // // query dataBase with query text for this user id
-    // pool.query( queryText, [ id ] )
-    //     .then( (response) => {
-    //         console.log( 'Got shopping list for user', response.rows );
-    //         res.send( response.rows );
-    //     })
-    //     .catch( (error) => {
-    //         console.log( 'Error Getting Kitchens', error );
-    //         res.sendStatus( 500 );
-    //     });
-}); // end GET route
-
 router.delete('/:itemId/:listId', rejectUnauthenticated, (req, res) => {
     // get current kitchen id from req.params
     const itemId = req.params.itemId;
@@ -102,19 +75,29 @@ router.delete('/:itemId/:listId', rejectUnauthenticated, (req, res) => {
     console.log( 'Deleting Item from shopping list on database', itemId, listId );
 
     // make queryText to query database
-    const queryText = `DELETE FROM "shoppingList_item"
+    const queryTextOne = `DELETE FROM "shoppingList_item"
                         WHERE "shoppingList_item"."item_id" = $1
                         AND "shoppingList_item"."list_id" = $2;`;
+    const queryTextTwo = `SELECT "kitchen"."id" FROM "kitchen"
+                            WHERE "kitchen"."shopping_list_id" = $1;`;
+    const queryTextThree = `UPDATE "kitchen_item" SET "added_to_list" = 'FALSE'
+                            WHERE "kitchen_id" = $1 AND "item_id" = $2;`;
     // // query dataBase with query text
-    pool.query( queryText, [ itemId, listId ] )
+    pool.query( queryTextOne, [ itemId, listId ] )
         .then( (response) => {
-            res.sendStatus( 200 );
+            pool.query( queryTextTwo, [ listId ] )
+                .then( (response) => {
+                    pool.query( queryTextThree, [ response.rows[0].id, itemId ] )
+                        .then( (response) => {
+                            res.sendStatus( 200 );
+                        })
+                        .catch( (error) => {
+                            console.log( 'Error Getting Kitchens', error );
+                            res.sendStatus( 500 );                            
+                        })
+                })
         })
-        .catch( (error) => {
-            console.log( 'Error Getting Kitchens', error );
-            res.sendStatus( 500 );
-        });
-}); // end DELETE ROUTE
+    }); // end DELETE ROUTE
 
 // Route to update shopping list with items at or below their minimum specified quantity
 router.put('/update/:kitchenId', rejectUnauthenticated, (req, res) => {
@@ -136,7 +119,7 @@ router.put('/update/:kitchenId', rejectUnauthenticated, (req, res) => {
                 item.belowMin = true;
                 addToList.push( item );
             }
-            else {
+            else if(item.add_to_list === false) {
                 item.belowMin = false;
                 removeFromList.push( item );
             }
@@ -188,6 +171,33 @@ router.put('/update/:kitchenId', rejectUnauthenticated, (req, res) => {
             res.sendStatus( 500 );
         });
 }); // end PUT ROUTE
+
+// POST route to add item to manually add item to shoppingList
+router.post( '/', (req, res) =>{
+    const itemId = req.body.itemId;
+    const kitchenId = req.body.kitchenId;
+    console.log( 'Adding item to shopping list on database from server', itemId, kitchenId );
+    
+    queryTextOne = `SELECT "shopping_list_id" from "kitchen" WHERE "kitchen"."id" = $1;`;
+    queryTextTwo = `INSERT INTO "shoppingList_item" ("list_id", "item_id")
+                    VALUES($1, $2);`;
+    queryTextThree=`UPDATE "kitchen_item" SET "added_to_list" = 'TRUE'
+                    WHERE "kitchen_id" = $1 AND "item_id" = $2;`;
+
+    pool.query( queryTextOne, [ kitchenId ] )
+        .then( (response) => {
+            pool.query( queryTextTwo, [ response.rows[0].shopping_list_id, itemId ] )
+                .then( (response) => {
+                    pool.query( queryTextThree, [ kitchenId, itemId ] )
+                    .then( (response) => {
+                        res.sendStatus( 200 );
+                    })
+                    .catch( (error) => {
+                        console.log( 'Error adding item from inventory to shopping list', error );
+                })
+            })
+        })
+}); // end POST
 
 // Route to update item on shopping list with specified quantity
 router.put('/edit/:itemId/:listId', rejectUnauthenticated, (req, res) => {

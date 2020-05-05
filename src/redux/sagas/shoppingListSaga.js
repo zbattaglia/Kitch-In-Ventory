@@ -39,11 +39,12 @@ function* updateShoppingList(action) {
   }
 }; //end fetchShoppingList
 
-function* putItemOnList(action) { 
-  console.log( 'In putItemOnList Saga', action );
+function* addItemToList(action) { 
+  console.log( 'In addItemToList Saga', action );
+  const itemInfo = action.payload;
   try {
 
-    yield axios.post(`/api/list/${action.payload.itemId}/${action.payload.kitchenId}`, action.payload);
+    yield axios.post(`/api/list`, itemInfo );
     
     // once list contents are returned, put them on redux state
     // yield put({ type: 'SET_SHOPPING_LIST', payload: response.data[0] });
@@ -68,7 +69,7 @@ function* deleteItemFromList(action) {
 function* shoppingListSaga() {
     yield takeLatest('GET_SHOPPING_LIST', fetchShoppingList);
     yield takeLatest('UPDATE_SHOPPING_LIST', updateShoppingList);
-    yield takeLatest('ADD_TO_SHOPPING_LIST', putItemOnList);
+    yield takeLatest('ADD_TO_SHOPPING_LIST', addItemToList);
     yield takeLatest('DELETE_FROM_SHOPPING_LIST', deleteItemFromList);
     yield takeLatest('EDIT_SHOPPING_LIST', editItemOnList);
 
