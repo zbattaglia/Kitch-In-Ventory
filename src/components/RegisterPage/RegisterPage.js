@@ -30,18 +30,37 @@ class RegisterPage extends Component {
     this.setState({
       [propertyName]: event.target.value,
     });
+  };
+
+  closeModal = () => {
+    this.props.dispatch( { type: 'CLEAR_REGISTRATION_ERROR' } );
   }
 
   render() {
     return (
-      <div className="row">
+      <div className="row" id="page-content">
         {this.props.errors.registrationMessage && (
-          <h2
-            className="alert"
-            role="alert"
-          >
-            {this.props.errors.registrationMessage}
-          </h2>
+          <div
+          className="modal-content"
+          role="alert"
+          id="login-error"
+          onClick={ this.closeModal}
+        >
+          <div className="modal-header" id="registration-error-header">
+            <h2>
+              <i class="fa fa-wrapper fa-exclamation-circle" ></i> 
+            </h2> 
+          </div>
+          <div className="modal-body">
+            <h2 id="modal-message">
+              {this.props.errors.registrationMessage}
+            </h2>
+            <p id="modal-message">If you have an account try logging in.</p>
+          </div>
+          <div className="modal-footer" id="registration-modal-footer">
+            <button>Try Again</button>
+          </div>
+        </div>
         )}
         <div className="col-4" id="register">
           <div className="card">
@@ -89,10 +108,10 @@ class RegisterPage extends Component {
                   /><span className="icon"><i className="fa fa-wrapper fa-envelope"></i></span>
                 </div>
               </div>
-              <div class="btn-container">
+              <div className="btn-container">
                   <input
                     type="submit"
-                    className="btn-light btn-animated"
+                    className="btn-success btn-animated"
                     name="register"
                     value="Register"
                   />

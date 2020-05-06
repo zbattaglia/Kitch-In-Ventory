@@ -9,6 +9,7 @@ import AddKitchenForm from '../AddKitchenForm/AddKitchenForm';
 
 class KitchenList extends Component {
 
+    // on click of link, dispatch action to get kitchen inventory
     handleLink = ( event, id ) => {
         console.log( 'Got a click on a kitchen', id );
         this.props.dispatch( { type: 'GET_INVENTORY', payload: id } );
@@ -17,23 +18,28 @@ class KitchenList extends Component {
   render(){
     return (
         <div>
-            <AddKitchenForm />
-            <div className="card">
+            <AddKitchenForm id="kitchen-form"/>
+            <div className="card" id="content">
                 <div className="card-header">
-                    <p className="card-head-title">{this.props.user.username}'s kitchens</p>
+                    <p className="kitchens-title">{this.props.user.username}'s kitchens</p>
                 </div>
                 <div className="divider"></div>
                 <div className="content">
                     <p>Click on a kitchen to view it's contents.</p>
                     <ul className="no-bullets">
                         { this.props.kitchen.map( kitchen => 
-                            <li key={kitchen.kitchen_id}>
+                            <li key={kitchen.kitchen_id} id="kitchenList">
                                 <div className="kitchen-li">
                                     <Link to='/kitchen' onClick={ (event) => this.handleLink(event, kitchen.kitchen_id) }>
                                         {kitchen.name}
                                     </Link>
                                 </div>
-                                <button className="btn" id="invite=btn">Invite</button>
+                                    <button
+                                        className="btn-success"
+                                        id="invite-btn">
+                                        <i className="fa fa-wrapper fa-paper-plane"></i>
+                                            Invite
+                                    </button>
                             </li>
                         )}
                     </ul>

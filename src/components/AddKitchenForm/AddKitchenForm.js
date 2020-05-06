@@ -7,6 +7,7 @@ class AddKitchenForm extends Component {
 
     state = {
         name: '',
+        modal: false,
     }
 
     handleChange = (event) => {
@@ -25,24 +26,56 @@ class AddKitchenForm extends Component {
             })
         }
         else {
-            alert( 'Enter a name for your kitchen.' );
+            this.setState({
+                modal: true,
+            })
         }
+    }
+
+    closeModal = () => {
+        this.setState({
+            modal: false,
+        })
     }
 
   render(){
     return (
-        <div className="btn-container">
-            <div className="input-control">     
-                <input
-                className="Input-Field"
-                type="text"
-                value={this.state.name}
-                onChange={ (event) => this.handleChange( event )}
-                />
-            </div> 
-            <button type="submit" className="btn-small btn-animated" id="addKitchen-btn" onClick={this.handleClick}>
-                Add a Kitchen
-            </button>
+        <div className="row" id="page-content">
+            <div className="card col-12">
+                <div className="btn-container">
+                    <div className="input-control">     
+                        <input
+                        className="Input-Field"
+                        type="text"
+                        value={this.state.name}
+                        onChange={ (event) => this.handleChange( event )}
+                        />
+                    </div>
+                    <div className="btn-container" id="addKitchen-container"> 
+                        <button
+                            type="submit"
+                            className="btn-success"
+                            id="addKitchen-btn"
+                            onClick={this.handleClick}>
+                            Add a Kitchen
+                        </button>
+                    </div>
+                </div>
+            </div>
+            { this.state.modal && 
+                <div
+                className="modal-content"
+                id="id-kitchen-error"
+                onClick={this.closeModal}
+                >
+                    <div className="modal-header" id="kitchen-modal-header">
+                        <h4><i className="fa fa-wrapper fa-exclamation-circle" ></i></h4>
+                    </div>
+                    <div className="modal-body">
+                        <p>Please provide a name for your kitchen.</p>
+                    </div>
+                </div>
+            }
         </div>
     )
   }

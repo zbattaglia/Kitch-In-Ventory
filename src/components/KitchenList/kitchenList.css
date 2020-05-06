@@ -5,3 +5,18 @@
 #kitchen-btn {
     float: right;
 }
+
+.invites-title {
+    text-align: center;
+    text-transform: capitalize;
+    font-weight: bold;
+}
+
+.card-header {
+    height: 1rem;
+}
+
+#kitchenList {
+    display: flex;
+    justify-content: space-between;
+}
