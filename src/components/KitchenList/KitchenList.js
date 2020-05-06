@@ -20,7 +20,7 @@ class KitchenList extends Component {
         <div>
             <AddKitchenForm id="kitchen-form"/>
             <div className="card" id="content">
-                <div className="card-header">
+                <div className="card-header" id="kitchen-list-header">
                     <p className="kitchens-title">{this.props.user.username}'s kitchens</p>
                 </div>
                 <div className="divider"></div>

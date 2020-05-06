@@ -9,12 +9,12 @@ class InviteList extends Component {
     return (
         <div>
             <div className="card u-flex u-flex-column h-100">
-                <div className="card-header">
+                <div className="card-header" id="invite-list-header">
                     <p className="invites-title">Invites</p>
                 </div>
                 <div className="divider"></div>
                 <div className="content">
-                    <p>Click on a kitchen to view it's contents. Click Accept to join kitchen.</p>
+                    <p>No Open invites.</p>
                     {/* <ul className="no-bullets">
                         { this.props.kitchen.map( kitchen => 
                             <li key={this.props.kitche_id}>

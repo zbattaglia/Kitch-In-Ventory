@@ -94,7 +94,7 @@ class LoginPage extends Component {
                     ></input><span className="icon"><i className="fa fa-wrapper fa-lock"></i></span>
                   </div>
               </div>
-                <div className="btn-container">
+                <div className="btn-container" id="login-btn">
                   <input
                     type="submit"
                     className="btn-success btn-animated"
