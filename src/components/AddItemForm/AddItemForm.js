@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import 'cirrus-ui';
+import './AddItemForm.css';
 
 class AddItemForm extends Component {
 
@@ -39,12 +40,13 @@ class AddItemForm extends Component {
     return (
         <div className="row">
         <div className="card col-10" id="edit-item-card">
-          <div className="card-head">
-            <h4 className="card-head-title" id="card-title">Add Item</h4>
+          <div className="card-header">
+            <h4 className="card-header-title" id="card-title">Add Item</h4>
           </div>
+          <div className="divider"></div>
           <div className="content">
             <form>
-                <div className="row">
+                <div className="row item-content">
                     <div className="col-4 level-item">
                         <p>Name:</p>
                     </div>
@@ -56,7 +58,7 @@ class AddItemForm extends Component {
                     />
                     </div>
                 </div>
-              <div className="row">
+              <div className="row item-content">
                 <div className="col-4 level-item">
                   <p>Quantity:</p>
                 </div>
@@ -68,7 +70,7 @@ class AddItemForm extends Component {
                   />
                 </div>
               </div>
-              <div className="row">
+              <div className="row item-content">
                 <div className="col-4 level-item">
                   <p>Min Quantity:</p>
                 </div>
@@ -80,7 +82,7 @@ class AddItemForm extends Component {
                   />
                 </div>
               </div>
-              <div className="row">
+              <div className="row item-content">
                 <div className="col-4 level-item">
                   <p>Unit:</p>
                 </div>
@@ -94,8 +96,9 @@ class AddItemForm extends Component {
               </div>
             </form>
           </div>
-          <div className="action-bar">
-            <button className="btn" onClick={ (event) => this.handleClick( event )}>ADD TO KITCHEN</button>
+          <div className="divider"></div>
+          <div id="item-footer">
+            <button className="btn-info" onClick={ (event) => this.handleClick( event )}>ADD TO KITCHEN</button>
           </div>
         </div>
       </div>

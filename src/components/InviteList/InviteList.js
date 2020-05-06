@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import 'cirrus-ui';
+import './InviteList.css';
 
 class InviteList extends Component {
 
@@ -9,7 +10,7 @@ class InviteList extends Component {
         <div>
             <div className="card u-flex u-flex-column h-100">
                 <div className="card-header">
-                    <p className="card-head-title">Invites</p>
+                    <p className="invites-title">Invites</p>
                 </div>
                 <div className="divider"></div>
                 <div className="content">

@@ -7,6 +7,12 @@ import './KitchenPage.css';
 
 class KitchenPage extends Component {
 
+  state = {
+    modal: false,
+    itemId: '',
+    selectedName: '',
+  }
+
     // on click of button, take user to edit item page for selected item,
     // or delete item based on button clicked
     handleClick = (event, buttonName, itemId) => {
@@ -46,12 +52,30 @@ class KitchenPage extends Component {
         return 'selected';
       }
     }; // end checkQuantity
+
+    toggleRow = ( event, itemId, itemName ) => {
+      console.log( 'Row Selected', itemId );
+      if( this.state.modal === false ){
+        this.setState({
+          modal: true,
+          itemId: itemId,
+          selectedName: itemName,
+        })
+      }
+      else {
+        this.setState({
+          modal: false,
+          itemId: '',
+          selectedName: '',
+        })
+      }
+    }
  
     // displayInventory used for conditional rendering
     displayInventory( inventory ) {
       // only renders to the DOM if inventory is TRUE,
       // creates a table and for the inventory information
-      if (inventory && inventory[0].item_id != null) {
+      if (inventory && inventory[0].item_id != null && window.innerWidth > 760) {
         return <div>
           <table className="table">
             <thead>
@@ -101,7 +125,66 @@ class KitchenPage extends Component {
               )}
             </tbody>
           </table>
-          <AddItemForm />
+          <AddItemForm className="kitchen-content"/>
+        </div>
+      }
+      else if (inventory && inventory[0].item_id != null && window.innerWidth < 760) {
+        return <div className="kitchen-content">
+          <table className="table" id="listTable">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Minimum</th>
+              </tr>
+            </thead>
+            <tbody>
+              { inventory.map( item => 
+                <tr
+                  key={item.item_id}
+                  className={this.checkQuantity(item.quantity, item.minimum_quantity)}
+                  onClick={(event) => this.toggleRow( event, item.item_id, item.name)}>
+                    <td>{item.name}</td>
+                    <td>{item.quantity} {item.unit}</td>
+                    <td>{item.minimum_quantity} {item.unit}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          {/* div below this point is a modal only visible after clicking on a table row */}
+          {this.state.modal && 
+          <div className="modal-content" id="edit-item-modal" onClick={this.toggleRow}>
+            <div className="modal-body">
+              <h5><i className="fa fa-wrapper fa-info-circle"></i>
+                Edit {this.state.selectedName}
+              </h5>
+            </div>
+            <div id="edit-modal-body">
+            <div className="btn-container">
+              <button
+                className="btn-small btn-animated btn-success"
+                onClick={ (event) => this.handleClick(event, 'edit', this.state.itemId) }>
+                  EDIT
+              </button>
+            </div>
+            <div className="btn-container">
+              <button
+                className="btn-small btn-animated btn-success"
+                onClick={ (event) => this.handleClick(event, 'add', this.state.itemId  ) }>
+                  ADD
+              </button>
+            </div>
+            <div className="btn-container">
+              <button
+                className="btn-small btn-animated btn-primary"
+                onClick={ (event) => this.handleClick(event, 'delete', this.state.itemId) }>
+                  DELETE
+              </button>
+            </div>
+            </div>
+          </div>
+        }
+          <AddItemForm className="kitchen-content"/>
         </div>
       }
       else {
@@ -119,8 +202,8 @@ class KitchenPage extends Component {
         <p>Looks like your kitchen is empty! Start Adding some items below.</p>
         <AddItemForm />
         </div>
-      }
     }; // end displayInventory
+  }
 
   render() {
     // get current kitchen
@@ -132,7 +215,8 @@ class KitchenPage extends Component {
       </div>
     );
   }
-};
+}
+
 
 // stores the inventory of seleced kitchen on props.inventory
 // store the id of the selected kitchen on props.selectedKitchen

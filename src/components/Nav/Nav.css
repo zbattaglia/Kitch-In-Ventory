@@ -9,3 +9,10 @@
 .nav {
   overflow: hidden;
 }
+
+#header-btn {
+  cursor: pointer;
+  display: block;
+  position: relative;
+  margin-left: auto;
+}

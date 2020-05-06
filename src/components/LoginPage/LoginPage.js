@@ -32,16 +32,35 @@ class LoginPage extends Component {
     });
   }
 
+  closeModal = () => {
+    this.props.dispatch( { type: 'CLEAR_LOGIN_ERROR' } );
+  }
+
   render() {
     return (
-      <div className="row">
+      <div className="row" id="page-content">
         {this.props.errors.loginMessage && (
-          <h2
-            className="alert"
-            role="alert"
-          >
-            {this.props.errors.loginMessage}
-          </h2>
+            <div
+              className="modal-content"
+              role="alert"
+              id="login-error"
+              onClick={ this.closeModal}
+            >
+              <div className="modal-header" id="login-error-header">
+                <h2>
+                  <i class="fa fa-wrapper fa-exclamation-circle" ></i> 
+                </h2> 
+              </div>
+              <div className="modal-body">
+                <h2 id="modal-message">
+                  {this.props.errors.loginMessage}
+                </h2>
+                <p id="modal-message">If you need an account click the sign up link.</p>
+              </div>
+              <div className="modal-footer" id="login-modal-footer">
+                <button>Try Again</button>
+              </div>
+          </div>
         )}
         <div className="col-4" id="login">
           <div className="card">
@@ -78,7 +97,7 @@ class LoginPage extends Component {
                 <div className="btn-container">
                   <input
                     type="submit"
-                    className="btn-light btn-animated"
+                    className="btn-success btn-animated"
                     name="submit"
                     value="Submit"
                   />

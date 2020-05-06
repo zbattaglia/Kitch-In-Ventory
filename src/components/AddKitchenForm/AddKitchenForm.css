@@ -1,4 +1,36 @@
-#addKitchen-btn {
-    background-color: lightgray;
-    color: white;
+@media screen and (min-width: 760px) {
+    .item-content {
+        height: 3rem;
+        margin: 5px;
+    }
+}
+
+@media screen and (max-width: 760px) {
+    #item-footer {
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 760px) {
+    #addKitchen-container {
+        text-align: center;
+    }
+}
+
+#page-content {
+    position: relative;
+    z-index:0;
+}
+
+#id-kitchen-error {
+    position: fixed;
+    color: #FA3E3E;
+    background-color: #FFCCCB;
+    margin-bottom: 0;
+}
+
+#kitchen-modal-header {
+    background-color: white;
+    text-align: center;
+    padding: 0;
 }
