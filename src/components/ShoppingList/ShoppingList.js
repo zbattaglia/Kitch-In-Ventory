@@ -15,15 +15,22 @@ class ShoppingList extends Component {
   // either renders the quantity from the database or an input field for editing
   // if the current state is in edit mode or not
   // and the selected current itemId and listId match the clicked buttons
-  renderQuantity( itemId, quantity, listId ) {
+  renderQuantity( itemId, quantity, listId, unit ) {
     if( this.state.editMode === false) {
-      return( quantity );
+        return( quantity );
     }
     else {
       console.log( 'Edit Mode State:', this.state )
       if ( listId === this.state.editList ) {
         if( itemId === this.state.editItem ) {
-          return <input type="number" value={this.state.editQuantity} onChange={event => this.handleChange(event, itemId, listId)}></input>
+          return <>
+                  <input
+                    type="number"
+                    value={this.state.editQuantity}
+                    onChange={event => this.handleChange(event, itemId, listId)}
+                    id="edit-quantity-input">  
+                  </input>
+                  </>
         }
         else {
           return( quantity );
@@ -115,7 +122,7 @@ class ShoppingList extends Component {
           {this.props.shoppingList.map( kitchenList =>
               <>
                 <div className="card-header">
-                  <h3 className="card-head-title">{kitchenList.listName}</h3>
+                  <h3 id="list-title">{kitchenList.listName}</h3>
                   <div className="divider"></div>
                 </div>
                 <table className="table small striped" key={kitchenList.listId}>
@@ -131,6 +138,7 @@ class ShoppingList extends Component {
                   <tbody>
                     { kitchenList.items.map( item => 
                       <tr key={item.itemId}>
+                        { item.itemName ? <>
                         <td>{item.itemName}</td>
                         <td>
                           {this.renderQuantity( item.itemId, item.quantity, kitchenList.listId ) }
@@ -152,6 +160,10 @@ class ShoppingList extends Component {
                         <td>
                           {this.checkMin( item.itemId, kitchenList.listId, item.belowMin )}
                         </td>
+                        </>
+                        :
+                        <td colSpan="75%">This list is empy.</td>
+                          }
                       </tr>
                       )}
                   </tbody>

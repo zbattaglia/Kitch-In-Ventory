@@ -10,3 +10,11 @@
 .button-column {
     width: 10%;
 }
+
+#edit-quantity-input {
+    width: 5em;
+}
+
+#list-title {
+    text-align: center;
+}

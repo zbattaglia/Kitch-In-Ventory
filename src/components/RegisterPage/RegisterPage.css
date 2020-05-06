@@ -63,3 +63,7 @@ form {
     padding-bottom: 0;
     background-color: white;
 }
+
+#register-btn {
+    margin-left: 1rem;
+}

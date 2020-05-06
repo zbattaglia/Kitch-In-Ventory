@@ -108,7 +108,7 @@ class RegisterPage extends Component {
                   /><span className="icon"><i className="fa fa-wrapper fa-envelope"></i></span>
                 </div>
               </div>
-              <div className="btn-container">
+              <div className="btn-container" id="register-btn">
                   <input
                     type="submit"
                     className="btn-success btn-animated"

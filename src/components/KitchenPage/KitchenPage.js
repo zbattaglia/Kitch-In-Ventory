@@ -39,7 +39,7 @@ class KitchenPage extends Component {
     getKitchen() {
       for( const kitchen of this.props.kitchens ) {
         if ( this.props.selectedKitchen === kitchen.kitchen_id ) {
-          return <div id="kitchen-title"><h4>{kitchen.name}</h4></div>
+          return <div id="kitchen-title"><h4 id="kitchen-title">{kitchen.name}</h4></div>
         }
       }
     }; // end getKitchen
@@ -91,13 +91,13 @@ class KitchenPage extends Component {
             <tbody>
               { inventory.map( item => 
                 <tr key={item.item_id} className={this.checkQuantity(item.quantity, item.minimum_quantity)}>
-                    <td>{item.name}</td>
+                    <td className="item-name">{item.name}</td>
                       <td>{item.quantity} {item.unit}</td>
                       <td>{item.minimum_quantity} {item.unit}</td>
                       <td>
                         <div className="btn-container">
                           <button
-                            className="btn btn-animated"
+                            className="btn-warning btn-animated"
                             onClick={ (event) => this.handleClick(event, 'edit', item.item_id) }>
                               EDIT
                           </button>
@@ -106,7 +106,7 @@ class KitchenPage extends Component {
                       <td>
                         <div className="btn-container">
                           <button
-                            className="btn btn-animated"
+                            className="btn-success btn-animated"
                             onClick={ (event) => this.handleClick(event, 'add', item.item_id  ) }>
                               ADD TO LIST
                           </button>
@@ -115,7 +115,7 @@ class KitchenPage extends Component {
                       <td>
                         <div className="btn-container">
                           <button
-                            className="btn btn-animated"
+                            className="btn-primary btn-animated"
                             onClick={ (event) => this.handleClick(event, 'delete', item.item_id) }>
                               DELETE
                           </button>
@@ -144,7 +144,7 @@ class KitchenPage extends Component {
                   key={item.item_id}
                   className={this.checkQuantity(item.quantity, item.minimum_quantity)}
                   onClick={(event) => this.toggleRow( event, item.item_id, item.name)}>
-                    <td>{item.name}</td>
+                    <td className="item-name">{item.name}</td>
                     <td>{item.quantity} {item.unit}</td>
                     <td>{item.minimum_quantity} {item.unit}</td>
                 </tr>
@@ -162,7 +162,7 @@ class KitchenPage extends Component {
             <div id="edit-modal-body">
             <div className="btn-container">
               <button
-                className="btn-small btn-animated btn-success"
+                className="btn-small btn-animated btn-warning"
                 onClick={ (event) => this.handleClick(event, 'edit', this.state.itemId) }>
                   EDIT
               </button>
@@ -199,7 +199,7 @@ class KitchenPage extends Component {
             </tr>
           </thead>
         </table>
-        <p>Looks like your kitchen is empty! Start Adding some items below.</p>
+        <p id="empty-kitchen-message">Looks like your kitchen is empty! Start Adding some items below.</p>
         <AddItemForm />
         </div>
     }; // end displayInventory

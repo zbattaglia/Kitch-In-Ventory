@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import ShoppingList from '../ShoppingList/ShoppingList';
-
-import AddItemForm from '../AddItemToListForm/AddItemToListForm';
+import './ShoppingListPage.css';
 
 class ShoppingListPage extends Component {
 
@@ -13,9 +12,8 @@ class ShoppingListPage extends Component {
   render() {
     return (
       <div>
-          <h1>{this.props.username}'s Shopping List</h1>
+          <h1 id="list-name">{this.props.username}'s Shopping List</h1>
           <ShoppingList />
-          {/* <AddItemForm /> */}
       </div>
     );
   }

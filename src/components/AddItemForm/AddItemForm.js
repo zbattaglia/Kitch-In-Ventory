@@ -11,6 +11,7 @@ class AddItemForm extends Component {
     quantity: '',
     minimumQuantity: '',
     unit: '',
+    modal: false,
   }
 
   // tracks changes on input fields and updates state
@@ -25,16 +26,28 @@ class AddItemForm extends Component {
   // onClick of add to kitchen button,
   // dispatch action with current state, and reset state for next input
   handleClick = () => {
-    console.log( 'Add to kitchen:', this.state );
-    const kitchenId = this.props.kitchenId;
-    this.props.dispatch( { type: 'ADD_ITEM', payload: {kitchenId: kitchenId, itemInfo: this.state } } );
-    this.setState({
-      name: '',
-      quantity: '',
-      minimumQuantity: '',
-      unit: '',
-    })
+    // console.log( 'Add to kitchen:', this.state );
+    if( this.state.name && this.state.quantity && this.state.minimumQuantity && this.state.unit ) {
+      const kitchenId = this.props.kitchenId;
+      this.props.dispatch( { type: 'ADD_ITEM', payload: {kitchenId: kitchenId, itemInfo: this.state } } );
+      this.setState({
+        name: '',
+        quantity: '',
+        minimumQuantity: '',
+        unit: '',
+      })
+    }
+    else {
+      this.toggleModal()
+    }
   }; // end handle click
+
+  toggleModal = () => {
+    this.setState({
+      ...this.state,
+      modal: !this.state.modal,
+    })
+  }
 
   render(){
     return (
@@ -98,13 +111,39 @@ class AddItemForm extends Component {
           </div>
           <div className="divider"></div>
           <div id="item-footer">
-            <button className="btn-info" onClick={ (event) => this.handleClick( event )}>ADD TO KITCHEN</button>
+            <button className="btn-success" onClick={ (event) => this.handleClick( event )}>ADD TO KITCHEN</button>
           </div>
         </div>
+
+        { (this.state.modal) && 
+          <div
+            className="modal-content"
+            id="add-item-modal"
+            onClick={this.toggleModal}>
+              <div className="modal-header" id="add-item-modal-header">
+                <h4>
+                  <i class="fa fa-wrapper fa-exclamation-circle" id="modal-icon"></i> 
+                </h4>
+              </div>
+                <div className="modal-body">
+                  <h4 id="modal-message">
+                    Please fill out all inputs to add item.
+                  </h4>
+                </div>
+              </div>
+        }
       </div>
     )
   }
 }
+
+{/* <div className="modal-header" id="login-error-header">
+<div className="modal-footer" id="login-modal-footer">
+<button>Try Again</button>
+</div> */}
+
+
+
 
 const mapStateToProps = (state) => ({
   kitchenId: state.inventory.selectedKitchen,

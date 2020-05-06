@@ -23,3 +23,21 @@
     justify-content: center;
     display: inline-flex;
 }
+
+#empty-kitchen-message {
+    text-align: center;
+}
+
+.btn-container {
+    padding-left: 3px;
+    padding-right: 3px;
+    margin: 0;
+}
+
+#kitchen-title {
+    text-transform: capitalize;
+}
+
+.item-name {
+    text-transform: capitalize;
+}
