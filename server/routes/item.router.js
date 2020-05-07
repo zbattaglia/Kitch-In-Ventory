@@ -34,10 +34,10 @@ router.put('/:kitchenId', rejectUnauthenticated, (req, res) => {
     const kitchenId = req.params.kitchenId;
     // extract variables to pass to SQL from req.body
     const itemId = req.body.itemId
-    const quantity = req.body.itemDetails.quantity;
+    const quantity = Number(req.body.itemDetails.quantity);
     const unit = req.body.itemDetails.unit;
     const minimum_quantity = req.body.itemDetails.minimumQuantity;
-    // console.log( 'Passing edit info to database', req.body, quantity, unit, minimum_quantity, kitchenId );
+    console.log( 'Passing edit info to database', req.body, quantity, unit, minimum_quantity, kitchenId );
 
     // make queryText to query database
     const queryText = `UPDATE "kitchen_item"

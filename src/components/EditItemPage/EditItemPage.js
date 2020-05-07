@@ -96,8 +96,8 @@ class EditItemPage extends Component {
             </form>
           </div>
           <div className="action-bar">
-            <button className="btn" onClick={ (event) => this.handleClick( event, 'back' )}>BACK</button>
-            <button className="btn" onClick={ (event) => this.handleClick( event, 'submit' )}>SAVE CHANGES</button>
+            <button className="btn-light" onClick={ (event) => this.handleClick( event, 'back' )}>BACK</button>
+            <button className="btn-success" onClick={ (event) => this.handleClick( event, 'submit' )}>SAVE CHANGES</button>
           </div>
         </div>
       </div>

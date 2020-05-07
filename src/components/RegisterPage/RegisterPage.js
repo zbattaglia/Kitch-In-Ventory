@@ -43,15 +43,15 @@ class RegisterPage extends Component {
           <div
           className="modal-content"
           role="alert"
-          id="login-error"
+          id="registration-error"
           onClick={ this.closeModal}
         >
           <div className="modal-header" id="registration-error-header">
             <h2>
-              <i class="fa fa-wrapper fa-exclamation-circle" ></i> 
+              <i className="fa fa-wrapper fa-exclamation-circle" ></i> 
             </h2> 
           </div>
-          <div className="modal-body">
+          <div className="modal-body" id="modal-message">
             <h2 id="modal-message">
               {this.props.errors.registrationMessage}
             </h2>

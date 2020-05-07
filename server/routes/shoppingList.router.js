@@ -19,7 +19,8 @@ router.get('/', rejectUnauthenticated, (req, res) => {
                         FULL OUTER JOIN "kitchen" ON "kitchen"."shopping_list_id" = "shopping_list"."id"
                         FULL OUTER JOIN "user_kitchen" ON "user_kitchen"."kitchen_id" = "kitchen"."id"
                         FULL OUTER JOIN "user" ON "user"."id" = "user_kitchen"."user_id"
-                        WHERE "user"."id" = $1;`;
+                        WHERE "user"."id" = $1
+                        ORDER BY "itemName";`;
     // query dataBase with query text for this user id
     pool.query( queryText, [ id ] )
         .then( (response) => {
@@ -115,14 +116,16 @@ router.put('/update/:kitchenId', rejectUnauthenticated, (req, res) => {
     // add to list of items to be added to shopping list
     // else add to list of items that should not be on shopping list
     inventory.map( item => {
-        if( item.item_id != null ) {
+        if( item.item_id !== null ) {
             if( Number(item.quantity) <= Number(item.minimum_quantity) ) {
                 item.belowMin = true;
                 addToList.push( item );
             }
-            else if(item.add_to_list === false) {
+            else {
                 item.belowMin = false;
-                removeFromList.push( item );
+                if( item.added_to_list === false ) {
+                    removeFromList.push( item );
+                }
             }
         }
     }); // end map

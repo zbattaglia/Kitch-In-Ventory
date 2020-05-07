@@ -54,7 +54,8 @@ function* editItem(action) {
     yield axios.put(`/api/item/${kitchenId}`, itemInfo );
 
     // once item is edited, GET the items again.
-    yield put({ type: 'GET_INVENTORY', payload: kitchenId });
+    yield put({ type: 'GET_INVENTORY', payload: kitchenId })
+    // yield put( { type: 'UPDATE_SHOPPING_LIST', payload: {selectedKitchen: kitchenId, inventory} } )
   } catch (error) {
     console.log(`Error Editing Item:`, error);
   }
@@ -70,7 +71,7 @@ function* boughtItem(action) {
 
     console.log( 'editing item for kitchen:', kitchenId );
     // make axios PUT request to server to add quantity to item in database
-    const response = yield axios.put(`/api/item/bought/${listId}/${itemId}`, {quantity} );
+    yield axios.put(`/api/item/bought/${listId}/${itemId}`, {quantity} );
 
     // once item is edited, GET the items again.
     yield put({ type: 'GET_INVENTORY', payload: kitchenId });
