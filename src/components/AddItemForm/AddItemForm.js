@@ -122,7 +122,7 @@ class AddItemForm extends Component {
             onClick={this.toggleModal}>
               <div className="modal-header" id="add-item-modal-header">
                 <h4>
-                  <i class="fa fa-wrapper fa-exclamation-circle" id="modal-icon"></i> 
+                  <i className="fa fa-wrapper fa-exclamation-circle" id="modal-icon"></i> 
                 </h4>
               </div>
                 <div className="modal-body">

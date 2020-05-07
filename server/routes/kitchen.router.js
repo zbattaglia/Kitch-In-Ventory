@@ -13,7 +13,8 @@ router.get('/', rejectUnauthenticated, (req, res) => {
     const queryText = `SELECT "kitchen_id", "kitchen"."name" FROM "user_kitchen"
                         JOIN "user" ON "user_kitchen"."user_id" = "user"."id"
                         JOIN "kitchen" ON "user_kitchen"."kitchen_id" = "kitchen"."id"
-                        WHERE "user"."id" = $1;`;
+                        WHERE "user"."id" = $1
+                        ORDER BY "kitchen"."name";`;
     // query dataBase with query text for this user id
     pool.query( queryText, [ id ] )
         .then( (response) => {
@@ -76,7 +77,8 @@ router.get('/inventory/:kitchenId', rejectUnauthenticated, (req, res) => {
     const queryText = `SELECT "item_id",  "item"."name", "quantity", "unit", "minimum_quantity", "added_to_list" FROM "kitchen_item"
                         FULL OUTER JOIN "kitchen" ON "kitchen_item"."kitchen_id" = "kitchen"."id"
                         FULL OUTER JOIN "item" ON "kitchen_item"."item_id" = "item"."id"
-                        WHERE "kitchen"."id" = $1;`;
+                        WHERE "kitchen"."id" = $1
+                        ORDER BY "item"."name";`;
     // // query dataBase with query text for this user id
     pool.query( queryText, [ kitchenId ] )
         .then( (response) => {

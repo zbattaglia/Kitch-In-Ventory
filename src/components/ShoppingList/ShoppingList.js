@@ -10,7 +10,31 @@ class ShoppingList extends Component {
     editList: '',
     editItem: '',
     editQuantity: '',
+    kitchenId: '',
+    modal: false,
   }; 
+
+  toggleModal = ( itemId, listId, quantity, kitchenId) => {
+    console.log( 'Editing from modal with quantity:', quantity)
+    if( this.state.modal === false ){
+      this.setState({
+        modal: true,
+        editList: listId,
+        editItem: itemId,
+        editQuantity: quantity,
+        kitchenId,
+      })
+    }
+    else {
+      this.setState({
+        modal: false,
+        editList: '',
+        editItem: '',
+        editQuantity: '',
+        kitchenId: '',
+      })
+    }
+  }
 
   // either renders the quantity from the database or an input field for editing
   // if the current state is in edit mode or not
@@ -57,9 +81,9 @@ class ShoppingList extends Component {
     if ( !belowMin ) {
       return (
         <button
-        className="btn btn-animated"
+        className="btn-primary btn-small btn-animated"
         onClick={(event) => this.handleClickFor( 'delete', itemId, listId )}>
-          REMOVE FROM LIST
+          REMOVE
         </button>
       )
     }
@@ -110,6 +134,12 @@ class ShoppingList extends Component {
       this.props.dispatch( { type: 'DELETE_FROM_SHOPPING_LIST', payload: { itemId, listId } } );
     }
 
+    if( buttonName === 'bought-modal' ) {
+      this.props.dispatch( { type: "BOUGHT_ITEM", payload: { itemId: this.state.editItem, listId: this.state.editList, quantity: this.state.editQuantity, kitchenId: this.state.kitchenId } } );
+      this.props.dispatch( { type: 'DELETE_FROM_SHOPPING_LIST', payload: { itemId: this.state.editItem, listId: this.state.editList } } );
+      this.toggleModal()
+    }
+
   }; // end handleClickFor
 
   componentDidMount() {
@@ -118,68 +148,143 @@ class ShoppingList extends Component {
 
   render() {
     return (
-      <div className="card content">
-          {this.props.shoppingList.map( kitchenList =>
-              <>
-                <div className="card-header">
-                  <h3 id="list-title">{kitchenList.listName}</h3>
-                  <div className="divider"></div>
-                </div>
-                <table className="table small striped" key={kitchenList.listId}>
-                  <thead>
-                    <tr>
-                      <th>Items</th>
-                      <th>Quantity</th>
-                      <th className="button-column"></th>                      
-                      <th className="button-column"></th>
-                      <th className="button-column"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    { kitchenList.items.map( item => 
-                      <tr key={item.itemId}>
-                        { item.itemName ? <>
-                        <td>{item.itemName}</td>
-                        <td>
-                          {this.renderQuantity( item.itemId, item.quantity, kitchenList.listId ) }
-                        </td>
-                        <td>
-                          <button
-                            className="btn btn-animated"
-                            onClick={(event) => this.handleClickFor( 'edit', item.itemId, kitchenList.listId, item.quantity, this.props.kitchen )}>
-                              EDIT
-                          </button>
-                        </td>
-                        <td>
-                          <button
-                            className="btn btn-animated"
-                            onClick={(event) => this.handleClickFor( 'bought', item.itemId, kitchenList.listId, item.quantity, this.props.kitchen )}>
-                              BOUGHT
-                          </button>
-                        </td>
-                        <td>
-                          {this.checkMin( item.itemId, kitchenList.listId, item.belowMin )}
-                        </td>
-                        </>
-                        :
-                        <td colSpan="75%">This list is empy.</td>
-                          }
+      <>
+      {window.innerWidth > 760 ?
+        <div className="card content">
+            {this.props.shoppingList.map( kitchenList =>
+                <>
+                  <div className="card-header">
+                    <h3 id="list-title">{kitchenList.listName}</h3>
+                    <div className="divider"></div>
+                  </div>
+                  <table className="table small striped" key={kitchenList.listId}>
+                    <thead>
+                      <tr>
+                        <th>Items</th>
+                        <th>Quantity</th>
+                        <th className="button-column"></th>                      
+                        <th className="button-column"></th>
+                        <th className="button-column"></th>
                       </tr>
-                      )}
-                  </tbody>
-                  <tfoot>
-                    <tr className="table-footer">
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </>
-            )}
-      </div>
+                    </thead>
+                    <tbody>
+                      { kitchenList.items.map( item => 
+                        <tr key={item.itemId}>
+                          { item.itemName ? <>
+                          <td>{item.itemName}</td>
+                          <td>
+                            {this.renderQuantity( item.itemId, item.quantity, kitchenList.listId ) }
+                          </td>
+                          <td>
+                            <button
+                              className="btn-warning btn-small btn-animated"
+                              onClick={(event) => this.handleClickFor( 'edit', item.itemId, kitchenList.listId, item.quantity, this.props.kitchen )}>
+                                EDIT
+                            </button>
+                          </td>
+                          <td>
+                            <button
+                              className="btn-success btn-small btn-animated"
+                              onClick={(event) => this.handleClickFor( 'bought', item.itemId, kitchenList.listId, item.quantity, this.props.kitchen )}>
+                                BOUGHT
+                            </button>
+                          </td>
+                          <td>
+                            {this.checkMin( item.itemId, kitchenList.listId, item.belowMin )}
+                          </td>
+                          </>
+                          :                       
+                          <td colSpan="75%">This list is empy.</td>
+                            }
+                        </tr>
+                        )}
+                    </tbody>
+                    <tfoot>
+                      <tr className="table-footer">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </>
+              )}
+        </div>
+        :
+        <>
+        <div className="card content">
+            {this.props.shoppingList.map( kitchenList =>
+                <>
+                  <div className="card-header">
+                    <h3 id="list-title">{kitchenList.listName}</h3>
+                    <div className="divider"></div>
+                  </div>
+                  <table className="table small striped" key={kitchenList.listId}>
+                    <thead>
+                      <tr>
+                        <th>Items</th>
+                        <th>Quantity</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      { kitchenList.items.map( item => 
+                        <tr
+                          key={item.itemId}
+                        >
+                          { item.itemName ? <>
+                          <td onClick={ (event) => this.toggleModal(item.itemId, kitchenList.listId, item.quantity, this.props.kitchen) }>
+                            {item.itemName}
+                          </td>
+                          <td>
+                            {this.renderQuantity( item.itemId, item.quantity, kitchenList.listId ) }
+                          </td>
+                          <td>
+                            <button
+                              className="btn-warning btn-small btn-animated"
+                              onClick={(event) => this.handleClickFor( 'edit', item.itemId, kitchenList.listId, item.quantity, this.props.kitchen )}>
+                                EDIT
+                            </button>
+                          </td>
+                          </>
+                          :                       
+                          <td colSpan="75%">This list is empy.</td>
+                            }
+                        </tr>
+                        )}
+                    </tbody>
+                    <tfoot>
+                      <tr className="table-footer">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+
+                  { this.state.modal && 
+                      <div className="modal-content" id="edit-list-modal">
+                        <div className="modal-body">
+                          <h5>
+                            <i className="fa fa-wrapper fa-info-circle"></i>
+                          </h5>
+                            <button
+                              className="btn-success btn-small btn-animated"
+                              onClick={(event) => this.handleClickFor( 'bought-modal' )}
+                              >
+                                BOUGHT
+                            </button>
+                            {/* {this.checkMin( item.itemId, kitchenList.listId, item.belowMin )} */}
+                        </div> 
+                      </div>}
+                </>
+              )}
+        </div>
+        </>  
+      }
+      </>
     );
   }
 }

@@ -28,8 +28,8 @@ form {
     #login-error {
         position: absolute;
         z-index: 2;
-        width: 33%;
-        margin: 33%;
+        width: 40%;
+        margin: 30%;
         margin-top: 3rem;
         background-color: #FFCCCB;
     }
