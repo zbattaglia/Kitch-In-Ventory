@@ -6,6 +6,7 @@ import kitchen from './kitchenReducer';
 import inventory from './inventoryReducer';
 import item from './itemReducer';
 import shoppingList from './shoppingListReducer';
+import invite from './inviteReducer';
 
 // rootReducer is the primary reducer for our entire project
 // It bundles up all of the other reducers so our project can use them.
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   inventory, //will have all items in a kitchen's inventory
   item, //item will have current item being edited from a kitchen's inventory
   shoppingList, //shoppingList will have contents of current users shopping list
+  invite, //invite will hold all the current user's pending invites
 });
 
 export default rootReducer;

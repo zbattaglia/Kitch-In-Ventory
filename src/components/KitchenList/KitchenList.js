@@ -66,7 +66,7 @@ class KitchenList extends Component {
                 </div>
                 <div className="divider"></div>
                 <div className="content">
-                    <p>Click on a kitchen to view it's contents.</p>
+                    <p id="kitchenList-info">Click on a kitchen to view it's contents.</p>
                     <ul className="no-bullets">
                         { this.props.kitchen.map( kitchen => 
                             <li key={kitchen.kitchen_id} id="kitchenList">
@@ -76,7 +76,7 @@ class KitchenList extends Component {
                                     </Link>
                                 </div>
                                     <button
-                                        className="btn-success"
+                                        className="btn-link btn-small"
                                         id="invite-btn"
                                         onClick={ (event) => this.handleInvite(event, kitchen.kitchen_id)}
                                         >
@@ -108,7 +108,7 @@ class KitchenList extends Component {
                             <button className="btn" onClick={ (event) => this.closeModal()} id="cancel-btn">
                                     CANCEL
                                 </button>
-                                <button className="btn-success" onClick={ (event) => this.sendInvite()} id="send-btn">
+                                <button className="btn-link" onClick={ (event) => this.sendInvite()} id="send-btn">
                                     SEND
                                 </button>
                             </div>

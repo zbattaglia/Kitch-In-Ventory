@@ -7,3 +7,12 @@
 #invite-list-header {
     height: 1rem;
 }
+
+#empty-invite-info {
+    text-align: center;
+}
+
+#invite-list {
+    display: flex;
+    justify-content: space-between;
+}

@@ -31,4 +31,53 @@ router.post( '/', (req, res) => {
         })
 }); // end POST route
 
+// GET route to get user's open invites
+router.get( '/', rejectUnauthenticated, (req, res) => {
+    // console.log( 'Getting user invites', req.user );
+
+    queryText = `SELECT "kitchen"."id", "kitchen"."name" FROM "invite"
+                    JOIN "kitchen" ON "invite"."kitchen_id" = "kitchen"."id"
+                    WHERE "invite"."user_id" = $1;`
+    pool.query( queryText, [ req.user.id ] )
+        .then( (response) => {
+            console.log( 'Got user invites', response.rows );
+            res.send( response.rows );
+        })
+        .catch( (error) => {
+            console.log( 'Error getting invites from database', error );
+        })
+}); // end GET ROUTE
+
+// DELETE ROUTE to delete invite when it is accepted
+router.delete( '/:kitchenId', rejectUnauthenticated, (req, res) => {
+    // extract kitchenId from params and userId from authentication
+    const kitchenId = req.params.kitchenId;
+    const userId = req.user.id;
+    console.log( `Accepting invite to kitchen ${kitchenId} for user ${userId}` );
+    
+    // first query to delete invite from invite table,
+    // second query to add that user to kitchen
+    const queryTextOne = `DELETE FROM "invite" WHERE "invite"."user_id" = $1
+                        AND "invite"."kitchen_id" = $2;`;
+    const queryTextTwo = `INSERT INTO "user_kitchen" ("user_id", "kitchen_id")
+                            VALUES ($1, $2);`;
+
+    pool.query( queryTextOne, [ userId, kitchenId ] )
+        .then( (response) => {
+            pool.query( queryTextTwo, [ userId, kitchenId ] )
+                .then( (response) => {
+                    console.log( 'Added user to invited kitchen' );
+                    res.sendStatus( 200 );
+                })
+                .catch( (error) => {
+                    console.log( 'Error adding user to kitchen', error );
+                    res.sendStatus( 500 );
+                });
+            })
+            .catch( (error) => {
+                console.log( 'Error deleting invite', error );
+                res.sendStatus( 500 );
+            })
+    })
+
 module.exports = router;

@@ -15,19 +15,19 @@ class UserPage extends Component {
   // when user page loads, get user's kitchen's and invite's
   componentDidMount(){
     this.props.dispatch( { type: 'GET_KITCHEN' } );
-    // this.props.dispatch( { type: 'GET_INVITES' } );
+    this.props.dispatch( { type: 'GET_INVITE' } );
   }
 
   render(){
     return (
       <div id="homePage">
         <div className="row">
-          <div className="col-6 list">
+          <div className="col-4 list">
             <KitchenList />
           </div>
         </div>
         <div className="row">
-          <div className="col-6 list">
+          <div className="col-4 list">
               <InviteList />
             </div>
         </div>
