@@ -13,6 +13,7 @@ const userRouter = require('./routes/user.router');
 const kitchenRouter = require('./routes/kitchen.router.js');
 const itemRouter = require('./routes/item.router');
 const shoppingListRouter = require('./routes/shoppingList.router');
+const inviteRouter = require('./routes/invite.router');
 
 // Body parser middleware
 app.use(bodyParser.json());
@@ -29,7 +30,8 @@ app.use(passport.session());
 app.use('/api/user', userRouter);
 app.use('/api/kitchen', kitchenRouter);
 app.use('/api/item', itemRouter);
-app.use('/api/list', shoppingListRouter)
+app.use('/api/list', shoppingListRouter);
+app.use('/api/invite', inviteRouter );
 
 // Serve static files
 app.use(express.static('build'));

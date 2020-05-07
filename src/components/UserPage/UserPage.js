@@ -12,8 +12,10 @@ import './userPage.css'
 // and then instead of `props.user.username` you could use `user.username`
 class UserPage extends Component {
 
+  // when user page loads, get user's kitchen's and invite's
   componentDidMount(){
     this.props.dispatch( { type: 'GET_KITCHEN' } );
+    // this.props.dispatch( { type: 'GET_INVITES' } );
   }
 
   render(){
