@@ -5,6 +5,11 @@ import './InviteList.css';
 
 class InviteList extends Component {
 
+    acceptInvite = ( kitchenId ) => {
+        // console.log( 'Accepting Invite', kitchenId );
+        this.props.dispatch( { type: 'ACCEPT_INVITE', payload: kitchenId } )
+    }
+
   render(){
     return (
         <div>
@@ -14,15 +19,24 @@ class InviteList extends Component {
                 </div>
                 <div className="divider"></div>
                 <div className="content">
-                    <p>No Open invites.</p>
-                    {/* <ul className="no-bullets">
-                        { this.props.kitchen.map( kitchen => 
-                            <li key={this.props.kitche_id}>
-                                {kitchen.name}
-                                <button>Invite</button>
+                    { (this.props.inviteList.length === 0) ?
+                    <p id="empty-invite-info">No Open invites.</p>
+                    :
+                    <ul className="no-bullets">
+                        { this.props.inviteList.map( invite => 
+                            <li key={invite.id} id="invite-list">
+                                {invite.name}
+                                <form>
+                                    <button
+                                        className="btn-success btn-small"
+                                        onClick={() => this.acceptInvite( invite.id)}>
+                                            ACCEPT
+                                    </button>
+                                </form>
                             </li>
                         )}
-                    </ul> */}
+                    </ul>
+                    }
                 </div>
             </div>
         </div>
@@ -34,8 +48,7 @@ class InviteList extends Component {
 // if you wanted you could write this code like this:
 // const mapStateToProps = ({user}) => ({ user });
 const mapStateToProps = (state) => ({
-  user: state.user,
-  kitchen: state.kitchen,
+  inviteList: state.invite,
 });
 
 // this allows us to use <App /> in index.js

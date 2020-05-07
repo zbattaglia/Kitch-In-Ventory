@@ -45,7 +45,7 @@ function* addKitchen(action) {
   }
 }
 
-// worker Saga: will be fired on "GET_KITCHEN" actions
+// worker Saga: will be fired on "ADD_KITCHEN" actions
 function* fetchInventory(action) {
   console.log( 'In fetchInventorySaga', action.payload );
   try {
