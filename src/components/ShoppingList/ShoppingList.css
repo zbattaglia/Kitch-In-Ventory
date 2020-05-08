@@ -18,3 +18,10 @@
 #list-title {
     text-align: center;
 }
+
+#edit-list-modal {
+    position: absolute;
+    z-index: 1;
+    top: 1vh;
+
+}
