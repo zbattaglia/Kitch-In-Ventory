@@ -80,24 +80,18 @@ router.delete('/:itemId/:listId', rejectUnauthenticated, (req, res) => {
     const queryTextOne = `DELETE FROM "shoppingList_item"
                         WHERE "shoppingList_item"."item_id" = $1
                         AND "shoppingList_item"."list_id" = $2;`;
-    const queryTextTwo = `SELECT "kitchen"."id" FROM "kitchen"
-                            WHERE "kitchen"."shopping_list_id" = $1;`;
-    const queryTextThree = `UPDATE "kitchen_item" SET "added_to_list" = 'FALSE'
-                            WHERE "kitchen_id" = $1 AND "item_id" = $2;`;
+    // const queryTextTwo = `UPDATE "shoppingList_item" SET "added_to_list = 'FALSE'
+    //                         WHERE "shoppingList_item"."list_id" = $1 AND "shoppingList_item"."item_id" = #2;
+    //                         WHERE "kitchen"."shopping_list_id" = $1;`;
     // // query dataBase with query text
     pool.query( queryTextOne, [ itemId, listId ] )
         .then( (response) => {
-            pool.query( queryTextTwo, [ listId ] )
-                .then( (response) => {
-                    pool.query( queryTextThree, [ response.rows[0].id, itemId ] )
-                        .then( (response) => {
-                            res.sendStatus( 200 );
-                        })
-                        .catch( (error) => {
-                            console.log( 'Error Getting Kitchens', error );
-                            res.sendStatus( 500 );                            
-                        })
-                })
+            console.log( 'Manually removed from shopping list' )
+            res.sendStatus( 200 );
+        })
+        .catch( (error) => {
+            console.log( 'Error deleting item from shopping list', error );
+            res.sendStatus( 500 );
         })
     }); // end DELETE ROUTE
 
@@ -121,12 +115,6 @@ router.put('/update/:kitchenId', rejectUnauthenticated, (req, res) => {
                 item.belowMin = true;
                 addToList.push( item );
             }
-            else {
-                item.belowMin = false;
-                if( item.added_to_list === false ) {
-                    removeFromList.push( item );
-                }
-            }
         }
     }); // end map
     console.log( `Updating shopping list for kitchen with id ${kitchenId}.
@@ -139,41 +127,25 @@ router.put('/update/:kitchenId', rejectUnauthenticated, (req, res) => {
                             WHERE "kitchen"."id" = $1;`;
     const queryTextTwo = `DELETE FROM "shoppingList_item"
                             WHERE "shoppingList_item"."list_id" = $1
-                            AND "shoppingList_item"."item_id" = $2;`;
-    const queryTextThree = `SELECT * FROM "shoppingList_item"
-                            WHERE "shoppingList_item"."list_id" = $1
-                            AND "shoppingList_item"."item_id" = $2;`
-    const queryTextFour = `INSERT INTO "shoppingList_item" ("list_id", "item_id", "belowMin")
+                            AND "shoppingList_item"."added_to_list" = $2;`;
+    const queryTextThree = `INSERT INTO "shoppingList_item" ("list_id", "item_id", "belowMin")
                             VALUES($1, $2, $3);`;
     // // query dataBase with query text
     pool.query( queryTextOne, [ kitchenId ] )
         .then( (response) => {
             console.log( 'Got Shopping list id', response.rows );
-            for( removeItem of removeFromList ) {
-                pool.query( queryTextTwo, [ response.rows[0].shopping_list_id, removeItem.item_id ] )
-            };
-            for( addItem of addToList ) {
-                let listId = response.rows[0].shopping_list_id;
-                pool.query( queryTextThree, [ listId, addItem.item_id ] )
+            let listId = response.rows[0].shopping_list_id
+                pool.query( queryTextTwo, [ listId, false ] )
                     .then( (response) => {
-                        console.log( 'result of queryTextThree', response.rows[0] );
-                        if( response.rows[0] === undefined ) {
-                            pool.query( queryTextFour, [ listId, addItem.item_id, addItem.belowMin ] )
-                                .then( (response) => {
-                                    res.sendStatus( 200 );
-                                })
-                                .catch( (error) => {
-                                    console.log( 'Error updating shopping list', error );
-                                })
-                        }
+                        addToList.map( item => {
+                            pool.query( queryTextThree, [ listId, item.item_id, item.belowMin ] )
+                        })
+                        res.sendStatus( 200 );
                     })
-            };
-            // res.sendStatus( 200 );
+                    .catch( (error) => {
+                        console.log( 'error updating shopping list', error );
+                    })
         })
-        .catch( (error) => {
-            console.log( 'Error Updating shopping List', error );
-            res.sendStatus( 500 );
-        });
 }); // end PUT ROUTE
 
 // POST route to add item to manually add item to shoppingList
@@ -183,24 +155,24 @@ router.post( '/', (req, res) =>{
     console.log( 'Adding item to shopping list on database from server', itemId, kitchenId );
     
     queryTextOne = `SELECT "shopping_list_id" from "kitchen" WHERE "kitchen"."id" = $1;`;
-    queryTextTwo = `INSERT INTO "shoppingList_item" ("list_id", "item_id")
-                    VALUES($1, $2);`;
-    queryTextThree=`UPDATE "kitchen_item" SET "added_to_list" = 'TRUE'
-                    WHERE "kitchen_id" = $1 AND "item_id" = $2;`;
+    queryTextTwo = `INSERT INTO "shoppingList_item" ("list_id", "item_id", "added_to_list")
+                    VALUES($1, $2, $3);`;
 
     pool.query( queryTextOne, [ kitchenId ] )
         .then( (response) => {
-            pool.query( queryTextTwo, [ response.rows[0].shopping_list_id, itemId ] )
+            pool.query( queryTextTwo, [ response.rows[0].shopping_list_id, itemId, true ] )
                 .then( (response) => {
-                    pool.query( queryTextThree, [ kitchenId, itemId ] )
-                    .then( (response) => {
-                        res.sendStatus( 200 );
-                    })
-                    .catch( (error) => {
-                        console.log( 'Error adding item from inventory to shopping list', error );
+                    res.sendStatus( 200 );
+                })
+                .catch( (error) => {
+                    console.log( 'Error inserting into shoppingList_item', error );
+                    res.sendStatus( 500 );
                 })
             })
-        })
+            .catch( (error) => {
+                console.log( 'Error getting shopping_list_id', error );
+                res.sendStatus( 500 );
+            })
 }); // end POST
 
 // Route to update item on shopping list with specified quantity
@@ -226,6 +198,100 @@ router.put('/edit/:itemId/:listId', rejectUnauthenticated, (req, res) => {
         });
 
 }); // end PUT ROUTE
+
+// // Route to update shopping list with items at or below their minimum specified quantity
+// router.put('/update/:kitchenId', rejectUnauthenticated, (req, res) => {
+//     // get current kitchen id from req.params
+//     // get inventory from req.body
+//     // create variable for items in inventory that are not to be on shopping list,
+//     // and items that are
+//     const kitchenId = req.params.kitchenId;
+//     const inventory = req.body;
+//     const removeFromList = [];
+//     const addToList = [];
+//     console.log( 'The inventory is:', inventory );
+//     // map over inventory and if items are at or below their minimum quantity,
+//     // add to list of items to be added to shopping list
+//     // else add to list of items that should not be on shopping list
+//     inventory.map( item => {
+//         if( item.item_id !== null ) {
+//             if( Number(item.quantity) <= Number(item.minimum_quantity) ) {
+//                 item.belowMin = true;
+//                 addToList.push( item );
+//             }
+//             else {
+//                 item.belowMin = false;
+//                 if( item.added_to_list === false ) {
+//                     removeFromList.push( item );
+//                 }
+//             }
+//         }
+//     }); // end map
+//     console.log( `Updating shopping list for kitchen with id ${kitchenId}.
+//                     Adding items: ${addToList} and removing: ${removeFromList}`, inventory );
+
+//     // first query uses kithen id to get the current shopping list id
+//     // the second query deletes items that no loner need to be on the list
+//     // the final query then adds all items that should be on the list
+//     const queryTextOne = `SELECT "shopping_list_id" FROM "kitchen"
+//                             WHERE "kitchen"."id" = $1;`;
+//     const queryTextTwo = `DELETE FROM "shoppingList_item"
+//                             WHERE "shoppingList_item"."list_id" = $1
+//                             AND "shoppingList_item"."item_id" = $2;`;
+//     const queryTextThree = `SELECT * FROM "shoppingList_item"
+//                             WHERE "shoppingList_item"."list_id" = $1
+//                             AND "shoppingList_item"."item_id" = $2;`
+//     const queryTextFour = `INSERT INTO "shoppingList_item" ("list_id", "item_id", "belowMin")
+//                             VALUES($1, $2, $3);`;
+//     // // query dataBase with query text
+//     pool.query( queryTextOne, [ kitchenId ] )
+//         .then( (response) => {
+//             console.log( 'Got Shopping list id', response.rows );
+//             for( removeItem of removeFromList ) {
+//                 pool.query( queryTextTwo, [ response.rows[0].shopping_list_id, removeItem.item_id ] )
+//                     .then( (response) => {
+//                         if ( addToList.length === 0 ) {
+//                             console.log( 'Removed item from shopping list' );
+//                             res.sendStatus( 200 );
+//                         }
+//                     })
+//                     .catch( (error) => {
+//                         console.log( 'Error removing item from shopping List' );
+//                         res.sendStatus( 500 );
+//                     })
+//             };
+//             for( addItem of addToList ) {
+//                 let listId = response.rows[0].shopping_list_id;
+//                 pool.query( queryTextThree, [ listId, addItem.item_id ] )
+//                     .then( (response) => {
+//                         console.log( 'result of queryTextThree', response.rows[0] );
+//                         if( response.rows[0] === undefined ) {
+//                             pool.query( queryTextFour, [ listId, addItem.item_id, addItem.belowMin ] )
+//                                 .then( (response) => {
+//                                     console.log( 'UPDATED SHOPPING LIST')
+//                                     res.sendStatus( 200 );
+//                                 })
+//                                 .catch( (error) => {
+//                                     console.log( 'Error updating shopping list', error );
+//                                     res.sendStatus( 500 );
+//                                 })
+//                         }
+//                         else {
+//                             res.sendStatus( 200 );
+//                         }
+//                     })
+//                     // .catch( (error) => {
+//                     //     console.log( 'Error getting items on shopping list', error );
+//                     //     res.sendStatus( 500 );
+//                     // })
+//             };
+//         })
+//         .catch( (error) => {
+//             console.log( 'Error Updating shopping List', error );
+//             res.sendStatus( 500 );
+//         });
+// }); // end PUT ROUTE
+
 
 
 

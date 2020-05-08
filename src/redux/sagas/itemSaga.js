@@ -18,7 +18,7 @@ function* selectEditItem(action) {
     // allow the server session to recognize the user
     const response = yield axios.get(`/api/item/${itemId}/${kitchenId}`, config);
     
-    // once kitchens are returned, put them on redux state
+    // once item is returned, put on redux state
     yield put({ type: 'SET_EDIT_ITEM', payload: response.data });
   } catch (error) {
     console.log(`Error getting selected item:`, error);

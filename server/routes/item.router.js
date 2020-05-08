@@ -19,7 +19,7 @@ router.get('/:itemId/:kitchenId', rejectUnauthenticated, (req, res) => {
     // query dataBase with query text for this user id
     pool.query( queryText, [ kitchenId, itemId ] )
         .then( (response) => {
-            // console.log( 'Got item to edit', response.rows );
+            console.log( 'Got item to edit', response.rows );
             res.send( response.rows[0] );
         })
         .catch( (error) => {
@@ -86,12 +86,17 @@ router.delete('/:itemId/:kitchenId', rejectUnauthenticated, (req, res) => {
                         })
                         .catch( (error) => {
                             console.log( 'Error deleting item from both kitchen and list', error );
+                            res.sendStatus( 500 );
                         })
+                })
+                .catch( (error) => {
+                    console.log( 'Error getting shopping list from kitchen', error );
+                    res.sendStatus( 500 );
                 })
         })
         .catch( (error) => {
             console.log( 'Error Deleing item from kitchen', error );
-            // res.sendStatus( 500 );
+            res.sendStatus( 500 );
         });
 
 }); // end DELETE ROUTE
@@ -128,23 +133,36 @@ router.post('/:id', rejectUnauthenticated, (req, res) => {
                 // then the second query will insert new item into table and get new id
                 pool.query( secondQueryText, [ name ] )
                     .then( (response) => {
-                        pool.query( thirdQueryText, [ kitchenId, response.rows[0].id, quantity, minimum_quantity, unit ] )
+                        pool.query( thirdQueryText, [ Number(kitchenId), Number(response.rows[0].id), quantity, minimum_quantity, unit ] )
                         .then( (response) => {
                             console.log( 'Item added to database', response );
                             res.sendStatus( 201 );
                         })
+                        .catch( (error) => {
+                            console.log( 'Error adding item into kitchen on database', error );
+                            res.sendStatus( 500 );
+                        })
+                    })
+                    .catch( (error) => {
+                        console.log( 'Error adding item', error );
+                        res.sendStatus( 500 );
                     })
             }
             else {
-                pool.query( thirdQueryText, [ kitchenId, response.rows[0].id, quantity, minimum_quantity, unit ] )
+                pool.query( thirdQueryText, [ Number(kitchenId), Number(response.rows[0].id), quantity, minimum_quantity, unit ] )
                 .then( (response) => {
                     console.log( 'Item added to database', response );
                     res.sendStatus( 201 );
+                })
+                .catch( (error) => {
+                    console.log( 'Error adding item to databse', error );
+                    res.sendStatus( 500 );
                 })
             }
         })
         .catch( (error) => {
             console.log( 'Error adding item to database', error );
+            res.sendStatus( 500 );
         });
 });
 
@@ -161,9 +179,9 @@ router.put('/bought/:listId/:itemId', rejectUnauthenticated, (req, res) => {
     queryTextTwo = `SELECT "quantity" FROM "kitchen_item"
                     WHERE "kitchen_item"."kitchen_id" = $1
                     AND "kitchen_item"."item_id" = $2;`;
-    queryTextThree = `UPDATE "kitchen_item" SET "quantity" = $1, "added_to_list" = $2
-                        WHERE "kitchen_item"."kitchen_id" = $3
-                        AND "kitchen_item"."item_id" = $4;`
+    queryTextThree = `UPDATE "kitchen_item" SET "quantity" = $1
+                        WHERE "kitchen_item"."kitchen_id" = $2
+                        AND "kitchen_item"."item_id" = $3;`
 
     pool.query( queryTextOne, [ listId ] )
         .then( (response) => {
@@ -171,7 +189,7 @@ router.put('/bought/:listId/:itemId', rejectUnauthenticated, (req, res) => {
             pool.query( queryTextTwo, [ kitchenId, itemId ] )
                 .then( (response) => {
                     const updatedQuantity = quantity + Number(response.rows[0].quantity);
-                    pool.query( queryTextThree, [ updatedQuantity, false, kitchenId, itemId ] )
+                    pool.query( queryTextThree, [ updatedQuantity, kitchenId, itemId ] )
                         .then( (response) => {
                             res.sendStatus( 200 );
                         })
@@ -180,6 +198,14 @@ router.put('/bought/:listId/:itemId', rejectUnauthenticated, (req, res) => {
                             res.sendStatus( 500 );
                         })
                 })
+                .catch( (error) => {
+                    console.log( 'Error selecting kitchen', error );
+                    res.sendStatus( 500 );
+                })
+        })
+        .catch( (error) => {
+            console.log( 'Error getting kitchen id', error );
+            res.sendStatus( 500 );
         })
 
 }); // end PUT ROUTE

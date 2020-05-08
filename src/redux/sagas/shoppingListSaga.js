@@ -2,7 +2,7 @@ import { put, takeLatest } from 'redux-saga/effects';
 import axios from 'axios';
 
 function* fetchShoppingList(action) {
-    console.log( 'In shoppingListSaga', action );
+    console.log( 'In fetch shoppingListSaga', action );
   try {
 
     const response = yield axios.get(`/api/list`);
@@ -32,8 +32,8 @@ function* updateShoppingList(action) {
 
     yield axios.put(`/api/list/update/${action.payload.selectedKitchen}`, action.payload.inventory);
     
-    // once list contents are returned, put them on redux state
-    // yield put({ type: 'SET_SHOPPING_LIST', payload: response.data });
+    // once list is updated, get new shopping list
+    yield put({ type: 'GET_SHOPPING_LIST' });
   } catch (error) {
     console.log(`Error getting shopping list:`, error);
   }
