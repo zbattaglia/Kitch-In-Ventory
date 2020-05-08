@@ -1,7 +1,6 @@
 
 const express = require('express');
 require('dotenv').config();
-
 const app = express();
 const bodyParser = require('body-parser');
 const sessionMiddleware = require('./modules/session-middleware');
@@ -14,6 +13,9 @@ const kitchenRouter = require('./routes/kitchen.router.js');
 const itemRouter = require('./routes/item.router');
 const shoppingListRouter = require('./routes/shoppingList.router');
 const inviteRouter = require('./routes/invite.router');
+// automated email router calls itself using node-cron
+// const automatedEmailRouter = require('./routes/automatedEmail.router');
+
 
 // Body parser middleware
 app.use(bodyParser.json());

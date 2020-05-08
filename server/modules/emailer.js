@@ -1,3 +1,4 @@
+// nodemailer to send emails
 const nodemailer = require('nodemailer');
 
   // sendEmail function uses nodemailer to send email
@@ -38,7 +39,8 @@ module.exports = sendEmail = ( emailInfo ) => {
       }
     })
 
-    // recipients email is passed into function from invite post
+    // recipients email is passed into function from invite post, or system
+    // body is content of email set above
     const mailOptions = {
       from: `${process.env.EMAIL}`,
       to: `${email}`,

@@ -31,10 +31,12 @@ router.post( '/', (req, res) => {
                 })
                 .catch( (error) => {
                     console.log( 'Error adding invite', error );
+                    res.sendStatus( 500 );
                 })
         })
         .catch( (error) => {
             console.log( 'Error getting user.id to add invite', error );
+            res.sendStatus( 500 );
         })
 
 }); // end POST route
@@ -53,6 +55,7 @@ router.get( '/', rejectUnauthenticated, (req, res) => {
         })
         .catch( (error) => {
             console.log( 'Error getting invites from database', error );
+            res.sendStatus( 500 );
         })
 }); // end GET ROUTE
 
