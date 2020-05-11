@@ -20,7 +20,7 @@ router.get('/', rejectUnauthenticated, (req, res) => {
                         FULL OUTER JOIN "user_kitchen" ON "user_kitchen"."kitchen_id" = "kitchen"."id"
                         FULL OUTER JOIN "user" ON "user"."id" = "user_kitchen"."user_id"
                         WHERE "user"."id" = $1
-                        ORDER BY "listName", "itemName";`;
+                        ORDER BY LOWER("shopping_list"."name"), LOWER("item"."name");`;
     // query dataBase with query text for this user id
     pool.query( queryText, [ id ] )
         .then( (response) => {
