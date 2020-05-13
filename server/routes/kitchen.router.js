@@ -86,7 +86,7 @@ router.get('/inventory/:kitchenId', rejectUnauthenticated, (req, res) => {
                         FULL OUTER JOIN "kitchen" ON "kitchen_item"."kitchen_id" = "kitchen"."id"
                         FULL OUTER JOIN "item" ON "kitchen_item"."item_id" = "item"."id"
                         WHERE "kitchen"."id" = $1
-                        ORDER BY "item"."name";`;
+                        ORDER BY LOWER("item"."name");`;
     // // query dataBase with query text for this user id
     pool.query( queryText, [ kitchenId ] )
         .then( (response) => {
