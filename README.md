@@ -1,115 +1,65 @@
-# Prime Project
-This version uses React, Redux, Express, Passport, and PostgreSQL (a full list of dependencies can be found in `package.json`).
+# Kitch-In-Ventory
 
-We **STRONGLY** recommend following these instructions carefully. It's a lot, and will take some time to set up, but your life will be much easier this way in the long run.
+## Description
 
-<!-- ## Download (Don't Clone) This Repository
+_Duration: 2 Week Sprint_
 
-* Don't Fork or Clone. Instead, click the `Clone or Download` button and select `Download Zip`.
-* Unzip the project and start with the code in that folder.
-* Create a new GitHub project and push this code to the new repository. -->
+This application allows user's to create a kitchen and keep track of everything in that kitchen. The application automatically generates a shopping list for user's of items that are running low in their kitchen and user's can also manually add items to their list for their next trip to the store. User's can invite other user's of the app to join their kitchen so shopping list's can be shared between multiple people.
 
-<!-- ## Prerequisites
+The purpose of this project was to develop a fully functional React application that requires user authentication and storing of data in a database. Another goal of this project was to design an application that was responsive to mobile screen sizes to allow user's to interact with their shopping list while in the store grocery shopping.
 
-Before you get started, make sure you have the following software installed on your computer:
+To see the fully functional site, please visit: [DEPLOYED VERSION OF APP](www.heroku.com)
+
+## Screen Shot
+
+Include one or two screen shots of your project here (optional). Remove if unused.
+
+### Prerequisites
+
+Link to software that is required to install the app (e.g. node).
 
 - [Node.js](https://nodejs.org/en/)
-- [PostrgeSQL](https://www.postgresql.org/)
-- [Nodemon](https://nodemon.io/) -->
+- List other prerequisites here
 
-<!-- ## Create database and table
+## Installation
 
-Create a new database called `prime_app` and create a `user` table:
-
-```SQL
-CREATE TABLE "user" (
-    "id" SERIAL PRIMARY KEY,
-    "username" VARCHAR (80) UNIQUE NOT NULL,
-    "password" VARCHAR (1000) NOT NULL
-);
-```
-
-If you would like to name your database something else, you will need to change `prime_app` to the name of your new database name in `server/modules/pool.js` -->
-
-## Development Setup Instructions
-
-<!-- * Run `npm install` -->
-<!-- * Create a `.env` file at the root of the project and paste this line into the file:
-    ```
+1. Create a database named `kitchen_inventory_app`,
+2. The queries in the `queries.sql` file are set up to create all the necessary tables and populate the needed data to allow the application to run correctly. The project is built on [Postgres](https://www.postgresql.org/download/), so you will need to make sure to have that installed. We recommend using Postico to run those queries as that was used to create the queries 
+3. Create a .env file at the root of the project and paste this line into the file:
     SERVER_SESSION_SECRET=superDuperSecret
-    ``` -->
-<!--    While you're in your new `.env` file, take the time to replace `superDuperSecret` with some long random string like `25POUbVtx6RKVNWszd9ERB9Bb6` to keep your application secure. Here's a site that can help you: [https://passwordsgenerator.net/](https://passwordsgenerator.net/). If you don't do this step, create a secret with less than eight characters, or leave it as `superDuperSecret`, you will get a warning.
-<!-- * Start postgres if not running already by using `brew services start postgresql`
-* Run `npm run server`
-* Run `npm run client`
-* Navigate to `localhost:3000` -->
+While you're in your new .env file, take the time to replace superDuperSecret with some long random string like 25POUbVtx6RKVNWszd9ERB9Bb6 to keep your application secure. Here's a site that can help you: https://passwordsgenerator.net/.
+4. (OPTIONAL) To enable the email functionality of this application include the following lines in your .env file.
+    Password, username, and email need to be for a valid gmail account (Note this will remain private in the .env file)
+    PASSWORD=*******
+    USERNAME=*******
+    EMAIL=********
+5. Open up your editor of choice and run an `npm install`
+6. Run `npm run server` in your terminal
+7. Run `npm run client` in your terminal
+8. The `npm run client` command will open up a new browser tab for you!
 
-## Debugging
+## Usage
 
-To debug, you will need to run the client-side separately from the server. Start the client by running the command `npm run client`. Start the debugging server by selecting the Debug button.
+Note: At any time you may click the about tab at the top of the page for some general instructions.
 
-![VSCode Toolbar](documentation/images/vscode-toolbar.png)
+1. To register an account click the register link and select a username and password and provide an email. (Note email is only required for sending/receiving email invitations. If you do not wish to provide an email you can enter anything in this field)
+2. Once logged-in you are taken to the user home page that will list all your current kitchens and invitations.
+3. Clicking on a kitchen will take you to that kitchen's inventory page listing all the items, quantities, and minimum quantites.
+4. Items can be added to the current kitchen via the add item form at the bottom of the kitchen page.
+5. You can edit or delete items in a kitchen with the respective buttons next to the item. Items that are running low will be highlighted in red and automatically added to the shopping list.
+6. Selecting the ADD button next to an item will add it to the list even if it is above its minimum quantity.
+7. The Shopping List tab at the top will take you to the user's shopping list. This will list all items for that user that are running low or have been manually added to the list in all of their kitchens. These are separated by kitchen and ordered alphabetically.
+8. The edit button allows a user to select a quantity of an item on the shopping list to "add to their cart". Clicking "bought" then removes this item from the shopping list and adds that quantity to the kitchen's inventory.
+9. An item can be deleted from a shopping list without changing the quantity in the inventory with the "remove" button. (Note: This is only available for items that are not below their minimum quantity.)
+10. Other user's can be invited to join a kitchen from the home page with their username and will have full access to the kitchen inventory and shopping list.
 
-Then make sure `Launch Program` is selected from the dropdown, then click the green play arrow.
+## Built With
 
-![VSCode Debug Bar](documentation/images/vscode-debug-bar.png)
+List technologies and frameworks here
 
+## Acknowledgement
+Thanks to [Prime Digital Academy](www.primeacademy.io) who equipped and helped me to make this application a reality.
+Thanks to my instructors for teaching me all of these technologies in such a short amount of time, and my classmates for learning everything wit me.
 
-## Testing Routes with Postman
-
-To use Postman with this repo, you will need to set up requests in Postman to register a user and login a user at a minimum. 
-
-Keep in mind that once you using the login route, Postman will manage your session cookie for you just like a browser, ensuring it is sent with each subsequent request. If you delete the `localhost` cookie in Postman, it will effectively log you out.
-
-1. Start the server - `npm run server`
-2. [Import the sample routes JSON file](./PostmanPrimeSoloRoutes.json) by clicking `Import` in Postman. Select the file.
-3. Click `Collections` and `Send` the following three calls in order:
-    1. `POST /api/user/register` registers a new user, see body to change username/password
-    2. `POST /api/user/login` will login a user, see body to change username/password
-    3. `GET /api/user` will get user information, by default it's not very much
-
-After running the login route above, you can try any other route you've created that requires a logged in user!
-
-
-## Production Build
-
-Before pushing to Heroku, run `npm run build` in terminal. This will create a build folder that contains the code Heroku will be pointed at. You can test this build by typing `npm start`. Keep in mind that `npm start` will let you preview the production build but will **not** auto update.
-
-* Start postgres if not running already by using `brew services start postgresql`
-* Run `npm start`
-* Navigate to `localhost:5000`
-
-## Lay of the Land
-
-* `src/` contains the React application
-* `public/` contains static assets for the client-side
-* `build/` after you build the project, contains the transpiled code from `src/` and `public/` that will be viewed on the production site
-* `server/` contains the Express App
-
-This code is also heavily commented. We recommend reading through the comments, getting a lay of the land, and becoming comfortable with how the code works before you start making too many changes. If you're wondering where to start, consider reading through component file comments in the following order:
-
-* src/components
-  <!-- * App/App -->
-  <!-- * Footer/Footer -->
-  <!-- * Nav/Nav -->
-  <!-- * AboutPage/AboutPage -->
-  <!-- * InfoPage/InfoPage -->
-  <!-- * UserPage/UserPage -->
-  <!-- * LoginPage/LoginPage -->
-  <!-- * RegisterPage/RegisterPage -->
-  <!-- * LogOutButton/LogOutButton -->
-  <!-- * ProtectedRoute/ProtectedRoute -->
-
-## Deployment
-
-1. Create a new Heroku project
-1. Link the Heroku project to the project GitHub Repo
-1. Create an Heroku Postgres database
-1. Connect to the Heroku Postgres database from Postico
-1. Create the necessary tables
-1. Add an environment variable for `SERVER_SESSION_SECRET` with a nice random string for security
-1. In the deploy section, select manual deploy
-
-## Update Documentation
-
-Customize this ReadMe and the code comments in this project to read less like a starter repo and more like a project. Here is an example: https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
+## Support
+If you have suggestions or issues, please email me at [zbattaglia3@gmail.com](www.google.com)
