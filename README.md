@@ -12,9 +12,9 @@ To see the fully functional site, please visit: [DEPLOYED VERSION OF APP](www.he
 
 ## Screen Shot
 
-[An Example Kitchen](ScreenShots/KitchenExample.png)
-[Editing an Item](ScreenShots/EditingAnItem.png)
-[An Example Shopping List](ScreenShots/ShoppingListExample.png)
+![An Example Kitchen](ScreenShots/KitchenExample.png)
+![Editing an Item](ScreenShots/EditingAnItem.png)
+![An Example Shopping List](ScreenShots/ShoppingListExample.png)
 
 ### Prerequisites
 
