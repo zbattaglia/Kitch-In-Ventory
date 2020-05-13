@@ -8,7 +8,7 @@ This application allows user's to create a kitchen and keep track of everything 
 
 The purpose of this project was to develop a fully functional React application that requires user authentication and storing of data in a database. Another goal of this project was to design an application that was responsive to mobile screen sizes to allow user's to interact with their shopping list while in the store grocery shopping.
 
-To see the fully functional site, please visit: [DEPLOYED VERSION OF APP](www.heroku.com)
+To see the fully functional site, please visit: [DEPLOYED VERSION OF APP](https://kitch-in-ventory.herokuapp.com/#/home)
 
 ## Screen Shot
 
