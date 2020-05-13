@@ -12,7 +12,9 @@ To see the fully functional site, please visit: [DEPLOYED VERSION OF APP](www.he
 
 ## Screen Shot
 
-Include one or two screen shots of your project here (optional). Remove if unused.
+[An Example Kitchen](ScreenShots/KitchenExample.png)
+[Editing an Item](ScreenShots/EditingAnItem.png)
+[An Example Shopping List](ScreenShots/ShoppingListExample.png)
 
 ### Prerequisites
 
