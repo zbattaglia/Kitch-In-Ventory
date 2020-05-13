@@ -2,7 +2,7 @@ CREATE TABLE "user" (
     "id" SERIAL PRIMARY KEY,
     "username" VARCHAR (80) UNIQUE NOT NULL,
     "password" VARCHAR (1000) NOT NULL,
-    "email" VARCHAR (255) NOT NULL,
+    "email" VARCHAR (255) NOT NULL
 );
 
 CREATE TABLE "kitchen" (
@@ -44,7 +44,8 @@ CREATE TABLE "shoppingList_item" (
 "list_id" INT REFERENCES "shopping_list",
 "item_id" INT REFERENCES "item",
 "quantity" NUMERIC DEFAULT '0',
-"belowMin" BOOLEAN DEFAULT 'FALSE',);
+"belowMin" BOOLEAN DEFAULT 'FALSE'
+);
 
 CREATE TABLE "invite" (
 "user_id" INT REFERENCES "user",
