@@ -20,7 +20,7 @@ class AddKitchenForm extends Component {
     handleClick = () => {
         console.log( 'Got click on addKitchen', this.state);
         if( this.state.name !== '' ){
-            this.props.dispatch( { type: 'ADD_KITCHEN', payload: this.state.name } );
+            this.props.dispatch( { type: 'ADD_KITCHEN', payload: {name: this.state.name } } );
             this.setState({
                 name: '',
             })
