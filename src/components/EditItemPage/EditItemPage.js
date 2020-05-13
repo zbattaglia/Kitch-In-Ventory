@@ -27,28 +27,28 @@ class EditItemPage extends Component {
 
     let itemInfo = { name: this.state.name };
 
-    if( this.state.quantity === '' ) {
-      itemInfo.quantity = item.quantity
-    }
-    else {
-      itemInfo.quantity = this.state.quantity
-    }
-
-    if( this.state.unit === '' ) {
-      itemInfo.unit = item.unit
-    }
-    else {
-      itemInfo.unit = this.state.unit
-    }
-
-    if( this.state.minimumQuantity === '' ) {
-      itemInfo.minimumQuantity = item.minimum_quantity
-    }
-    else {
-      itemInfo.minimumQuantity = this.state.minimumQuantity
-    }
-
     if( buttonName === 'submit' ) {
+      if( this.state.quantity === '' ) {
+        itemInfo.quantity = item.quantity
+      }
+      else {
+        itemInfo.quantity = this.state.quantity
+      }
+
+      if( this.state.unit === '' ) {
+        itemInfo.unit = item.unit
+      }
+      else {
+        itemInfo.unit = this.state.unit
+      }
+
+      if( this.state.minimumQuantity === '' ) {
+        itemInfo.minimumQuantity = item.minimum_quantity
+      }
+      else {
+        itemInfo.minimumQuantity = this.state.minimumQuantity
+      }
+
       this.props.dispatch( { type: 'EDIT_ITEM', payload: {kitchenId: kitchenId, itemId: itemId, itemInfo } } );
       this.setState({
         name: '',

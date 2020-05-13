@@ -57,7 +57,18 @@ Note: At any time you may click the about tab at the top of the page for some ge
 
 ## Built With
 
-List technologies and frameworks here
+- JavaScript
+- React
+- Node.js
+- Redux-Saga
+- Express
+- Postgres
+- SQL
+- HTML
+- CSS
+- Cirrus CSS
+- Nodemailer
+
 
 ## Acknowledgement
 Thanks to [Prime Digital Academy](www.primeacademy.io) who equipped and helped me to make this application a reality.
